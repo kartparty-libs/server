@@ -1,1 +1,0 @@
-dofile("./Server/KernelServer/InviteModule/InviteManager.lua");
