@@ -1,0 +1,96 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_server_notice}</h1>
+</div>
+<div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 1em;margin-bottom: 1em;">
+        <button class="btn btn-primary" id="refresh">
+            <i class="fa fa-refresh"></i> {$Think.lang.server_refresh_server_notice}</button>
+    </div>
+    <div class="col-sm-3 padding-bottom">
+            {$Think.lang.server_taid}:
+            <input name="versions" type="text" id="servertaid">
+     </div>
+    <div class="col-sm-3 padding-bottom">
+        {$Think.lang.shelf_activity_version}:
+        <input name="versions" type="text" id="versions">
+    </div>
+    <div class="col-md-2 padding-bottom" style="clear: both">
+        <div class="col-sm-2 padding-bottom" >{$Think.lang.server_notice}</div>
+        <div class="col-md-2">
+            <textarea style="width: 80em; height: 12em;resize: none" class="form-control" id="content" name="msg" placeholder="Default Text"
+                name="content"></textarea>
+        </div>
+    </div>
+    <div class="col-md-12" style="margin-top: 1em;margin-bottom: 1em;">
+            <button class="btn btn-primary" id="submit">
+                <i class="fa fa-refresh"></i> {$Think.lang.common_submit}</button>
+     </div>
+        <div class="table-responsive" style="clear: both">
+            <input type="hidden" id="roleOpenId" value="">
+            <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>{$Think.lang.server_taid}</th>
+                        <th>{$Think.lang.shelf_activity_version}</th>
+                        <th>{$Think.lang.server_notice}</th>
+                        <!-- <th>{$Think.lang.common_control}</th> -->
+                    </tr>
+                </thead>
+                <tbody class="players">
+                </tbody>
+            </table>
+        </div>
+</div>
+
+<script type="application/javascript">
+    function SetServerNotice() {
+        var content = $("#content").val();
+        var nversions = $("#versions").val();
+        var id = $("#servertaid").val();
+        if(content.length <= 0 || nversions.length <= 0 || id.length <= 0){
+            alert('{$Think.lang.tip_manage_error}');
+            return
+        }
+        $.ajax({
+            url: "__MODULE__/Server/SetServerNotice",
+            data: { serverId: id, str:content, newVersion:nversions },
+            success: function (msg) {
+                if (msg) {
+                    refreshServerNotice(0);
+                } else {
+                    alert('{$Think.lang.tip_manage_error}');
+                }
+            },
+            error: function (msg) {
+                alert('{$Think.lang.tip_manage_error}');
+            }
+        });
+    }
+    $("#refresh").click(function () {
+        refreshServerNotice(0);
+    });
+    $("#submit").click(function () {
+        SetServerNotice();
+    });
+    function refreshServerNotice(id) {
+        $.ajax({
+            url: "__MODULE__/Server/refreshServerNotice",
+            data: { serverId: id },
+            success: function (msg) {
+                if (msg.length > 0) {
+                    $(".players").html("");
+                    for (var i = 0; i < msg.length; i++) {
+                        var html = "<tr><td>" + msg[i]["id"] + "</td><td>" + msg[i]["version"] + "</td><td>"  + msg[i]["text"] + "</td><td>" ;
+                            // "<input class='btn btn-danger' onclick=SetServerNotice('" + msg[i]["id"] + "'," + msg[i]["version"]  + ") type='button' value='{$Think.lang.common_submit}'></td></tr>";
+                        $(".players").append(html);
+                    }
+                } else {
+                    alert("{$Think.lang.tip_refresh_server_failed}");
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_refresh_server_failed}');
+            }
+        });
+    }    
+</script>

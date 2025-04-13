@@ -1,0 +1,34 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_user_info_manage_log}</h1>
+</div>
+
+<div class="col-xs-12">
+    <div class="table-responsive">
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>{$Think.lang.log_manage_user}</th>
+                <th>{$Think.lang.log_manage_name}</th>
+                <th>{$Think.lang.log_manage_content}</th>
+                <th style="width: 150px;">{$Think.lang.log_manage_date}</th>
+            </tr>
+            </thead>
+            <tbody class="serverinfo">
+            <volist name="result.OperateLog" id="operateLog">
+                <tr>
+                    <td>{$operateLog.operate_user}</td>
+                    <td>{$operateLog.operate}</td>
+                    <td>{$operateLog.operate_value}</td>
+                    <td>{$operateLog.operate_time}</td>
+                </tr>
+            </volist>
+            </tbody>
+        </table>
+    </div>
+    <div class="center" id="pageContent">
+
+    </div>
+</div>
+<script type="application/javascript">
+    bottomPage("__MODULE__/UserInfo/operateLog","{$result.page}","{$result.pageCount}");
+</script>

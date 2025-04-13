@@ -1,0 +1,819 @@
+<style type="text/css">
+    .zhankai {
+        width: 3em;
+    }
+
+    table {
+        font-size: 1em;
+    }
+
+    .editDiv {
+        width: 25%;
+        height: auto;
+        position: absolute;
+        left: 33%;
+        top: 25%;
+        padding: 0px;
+        border: 0;
+        position: fixed;
+    }
+
+    .widget-box {
+        padding: 0;
+    }
+</style>
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_activity_configuration}</h1>
+</div>
+<div class="col-xs-12">
+    <div class="table-responsive">
+        <button class="btn btn-primary" style="margin-bottom: 1em;" id="addActivity">
+            <sapn class="glyphicon glyphicon-plus small">&nbsp;{$Think.lang.activity_add}</sapn>
+        </button>
+        <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="zhankai"></th>
+                <th>ID</th>
+                <th>{$Think.lang.common_name}</th>
+                <th>{$Think.lang.common_type}<input type="text" id="act_type" name="act_type" style="width: 150px;margin-left: 2em;" placeholder="{$Think.lang.common_type}" value="{$act_type}"></th>
+                <th>{$Think.lang.activity_type}</th>
+                <th>{$Think.lang.activity_position}</th>
+                <th>{$Think.lang.activity_icon}</th>
+                <th>{$Think.lang.activity_desc}</th>
+                <th>{$Think.lang.common_order}</th>
+                <th>{$Think.lang.activity_update_time}</th>
+                <th>{$Think.lang.common_control}</th>
+            </tr>
+            </thead>
+            <tbody class="players">
+            <volist name="result.Activities" id="activity">
+                <tr>
+                    <input type="hidden" id="{$activity.id}_type" value="{$activity.type}"/>
+                    <td>
+                        <sapn class="glyphicon glyphicon-plus activityItems_{$activity.id}"
+                              onclick="activityItems({$activity.id})"></sapn>
+                    </td>
+                    <td>{$activity.id}</td>
+                    <td>{$activity.name}</td>
+                    <td>
+                        <php>echo
+                            $_SESSION[C("SESSION_PREFIX")]["activityTypes"][$activity["type"]]."[#".$activity["type"]."]";
+                        </php>
+                    </td>
+                    <td>{$Think.lang.activity_default_type}[#{$activity.category}]</td>
+                    <td>
+                        <php>echo
+                            $_SESSION[C("SESSION_PREFIX")]["activityPosition"][$activity["position"]]."[#".$activity["position"]."]";
+                        </php>
+                    </td>
+                    <td>{$activity.icon}</td>
+                    <td>{$activity.desc}</td>
+                    <td>{$activity.order}</td>
+                    <td>
+                        {$activity.create_time}
+                    </td>
+                    <td>
+                        <sapn class="glyphicon glyphicon-edit small blue" onclick=editActivity({$activity.id})>
+                            {$Think.lang.common_edit}
+                        </sapn>
+                        &nbsp;
+                        <sapn class="glyphicon glyphicon-trash small red" onclick=delActivity({$activity.id})>
+                            {$Think.lang.common_delete}
+                        </sapn>
+                    </td>
+                </tr>
+                <tr class="activities" id="activity_items_{$activity.id}" style="display: none;">
+                    <td></td>
+                    <td colspan="10">
+                        <div>
+                            <button class="btn btn-primary" style="margin-bottom: .5em;">
+                                <sapn class="glyphicon glyphicon-plus small"
+                                      onclick=addItems($(this),{$activity.id},{$activity.type})>&nbsp;{$Think.lang.activity_configuration_add}
+                                </sapn>
+                            </button>
+                            <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                                <thead id="{$activity.id}_item_thead">
+                                </thead>
+                                <tbody id="{$activity.id}_item_tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </volist>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="center" id="pageContent">
+
+    </div>
+    <!-- /.table-responsive -->
+</div>
+<div class="page-content"
+     style="display:none;background: #000000;width: 100%;height: 100%;position: fixed;top: 0;left: 0;opacity: .3;"
+     id="opacityDiv">
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="activityEditDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.activity_add}</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="activityForm">
+                        <input type="hidden" name="real_act_id" id="real_act_id" min="1">
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">ID:</span><input type="number" name="id" id="activityForm_id" min="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_name}:</span><input type="text" name="name"
+                                                                                id="activityForm_name">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_type}:</span>
+                            <select name="type" id="activityForm_type">
+                                <volist name="Think.session.activityTypes" id="type">
+                                    <option value="{$key}">{$type}[#{$key}]</option>
+                                </volist>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_status}:</span>
+                            <select name="state" id="activityForm_state">
+                                <option value="0">{$Think.lang.activity_status_open}</option>
+                                <option value="1">{$Think.lang.activity_status_close}</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_type}:</span>
+                            <select name="category" id="activityForm_category">
+                                <option value="0">{$Think.lang.activity_default_type}[#0]</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_position}:</span>
+                            <select name="position" id="activityForm_position">
+                                <volist name="Think.session.activityPosition" id="position">
+                                    <option value="{$key}">{$position}</option>
+                                </volist>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_icon}:</span><input type="text" name="icon"
+                                                                                  id="activityForm_icon">
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_desc}:</span>
+                            <textarea style="resize: none;" class="col-lg-8" rows="5" name="desc"
+                                      id="activityForm_desc"></textarea>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_order}:</span><input type="number" name="order" id="activityForm_order" min="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveActivity"
+                                   value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateActivity"
+                                   value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;"
+                                   value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="itemEditDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.activity_configuration_add}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="itemsForm">
+                        <input type="hidden" name="category" value="default">
+                        <input type="hidden" name="activity_id" id="activity_id">
+                        <input type="hidden" name="activity_item_id" id="activity_item_id">
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-4 align-right">{$Think.lang.activity_configuration_unique}:</span><input type="number" name="key" id="params-key" min="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top name">
+                            <span class="col-lg-4 align-right">{$Think.lang.common_name}:</span><input type="text" name="name"
+                                                                                id="params-name">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveItems" value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateItems" value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;" value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="rewardEditDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.activity_awards_add}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="rewardForm">
+                        <input type="hidden" name="id" id="reward_id">
+                        <input type="hidden" name="content_id" id="content_id">
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-4 align-right">{$Think.lang.item_name}:</span>
+                            <select class="chosen-select col-lg-4 itemName" name="item_id" id="reward_item_id"
+                                    style="display: none;"
+                                    data-placeholder="Choose a Country...">
+                                <option value="0">{$Think.lang.mail_item_select}</option>
+                                <volist name="items" id="item">
+                                    <option value="{$item.itemid}">{$item.itemname}[#{$item.itemid}]</option>
+                                </volist>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-4 align-right">{$Think.lang.common_number}:</span>
+                            <input type="number" name="number" id="reward_number" min="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-4 align-right">{$Think.lang.common_order}:</span>
+                            <input type="number" name="order" id="reward_order" min="1">
+                        </div>
+                        <!-- <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-4 align-right">{$Think.lang.activity_awards_time_limit}:</span>
+                            <select class="col-lg-4" name="is_expire" id="reward_is_expire">
+                                <option value="0">{$Think.lang.common_no}</option>
+                                <option value="1">{$Think.lang.common_yes}</option>
+                            </select>
+                        </div> -->
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveReward"
+                                   value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateReward"
+                                   value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;"
+                                   value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript">
+    bottomPage("__MODULE__/Activity/show","{$result.page}","{$result.pageCount}");
+</script>
+<script type="text/javascript">
+    $(".itemName").chosen({search_contains:true});
+    function rewards(itemId) {
+        if ($('#award_' + itemId).length == 0) {
+            $('#activity_item_' + itemId).after("<tr id='award_" + itemId + "'></tr>");
+            $("#award_" + itemId).hide();
+        }
+        $("#award_" + itemId).toggle(function () {
+            if ($(".activity_item_" + itemId).hasClass("glyphicon-plus")) {
+                $(".activity_item_" + itemId).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+                $("#award_" + itemId).html("<td colspan='" + $("#activity_item_" + itemId + " td").length + "'>" +
+                        "<div><button class='btn btn-primary' style='margin-bottom: .5em;' onclick=addReward(" + itemId + ")><sapn class='glyphicon glyphicon-plus small'>" +
+                        "&nbsp;{$Think.lang.activity_awards_add}</sapn></button><table class='table table-striped table-bordered table-hover'><thead>" +
+                        "<th>{$Think.lang.item_name}</th><th>{$Think.lang.item_number}</th><th>{$Think.lang.common_order}</th><th>{$Think.lang.activity_awards_time_limit}</th><th>{$Think.lang.common_control}</th>" +
+                        "</thead><tbody id='" + itemId + "_reward'></tbody></table></div></td>")
+                $.ajax({
+                            url:"__MODULE__/Awards/getRewardByItemId",
+                            data:{itemId:itemId},
+                            success:function (msg) {
+                                $("#" + itemId + "_reward").html("");
+                                if (msg != null) {
+                                    for (var i = 0,len = msg.length; i < len; i++) {
+                                        var rowStr = "<tr id='reward_" + msg[i].id + "'>";
+                                        var enumArr = {$Think.session.enum};
+                                    var itemStr = msg[i].item_id;
+                                    if (typeof(enumArr[itemStr]) != 'undefined') {
+                                        itemStr = enumArr[itemStr];
+                                    }
+                                    rowStr += "<td>" + itemStr + "[#" + msg[i].item_id + "]</td>"
+                                    rowStr += "<td>" + msg[i].number + "</td>"
+                                    rowStr += "<td>" + msg[i].order + "</td>"
+                                    var param = $.parseJSON(msg[i].params);
+                                    if(param.is_expire == 0){
+                                        param = "{$Think.lang.common_no}";
+                                    }else if(param.is_expire == 1){
+                                        param = "{$Think.lang.common_yes}";
+                                    }
+                                    rowStr += "<td>" + param + "</td>"
+                                    var controlStr = "<td><sapn class='glyphicon glyphicon-edit small blue' onclick=editAward(" + itemId + "," + msg[i].id + ")>{$Think.lang.common_edit}</sapn>&nbsp;" +
+                                            "<sapn class='glyphicon glyphicon-trash small red' onclick=delAward(" + itemId + "," + msg[i].id + ")>{$Think.lang.common_delete}</sapn></td></tr>";
+                                    rowStr += controlStr + "</tr>";
+                                    $("#" + itemId + "_reward").append(rowStr);
+                                    }
+                                }
+                            },
+                            error:function () {
+                                alert('{$Think.lang.tip_get_activity_awards_conf_error}');
+                            }
+                    });
+            }else{
+                    $("#award_" + itemId).remove();
+                    $(".activity_item_" + itemId).removeClass("glyphicon-minus");
+                    $(".activity_item_" + itemId).addClass("glyphicon-plus");
+            }
+        });
+    }
+    function delAward(itemId, awardId) {
+        if (confirm("{$Think.lang.tip_confirm_delete_awards_conf}")) {
+            $.ajax({
+                url:"?s=/Home/Awards/delItemAward",
+                data:{itemId:itemId, awardId:awardId},
+                type:"POST",
+                success:function (msg) {
+                    if (msg == 1) {
+                        $("#reward_" + awardId).remove();
+                    } else {
+                        alert('{$Think.lang.tip_delete_awards_conf_failed}');
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_delete_awards_conf_error}');
+                }
+            });
+        }
+    }
+
+    function addReward(itemId) {
+        $("#content_id").val(itemId);
+        $("#opacityDiv").show();
+        $("#rewardEditDiv").show();
+        $("#saveReward").show();
+        $("#updateReward").hide();
+    }
+
+    function delItem(activityId, itemId) {
+        if (confirm("{$Think.lang.tip_confirm_delete_activity_conf}?")) {
+            $.ajax({
+                url:"?s=/Home/ActivityItems/delActivityItem",
+                data:{activityId:activityId, itemId:itemId},
+                type:"POST",
+                success:function (msg) {
+                    if (msg == itemId) {
+                        $("#activity_item_" + itemId).remove();
+                        rewards(itemId);
+                    } else {
+                        alert('{$Think.lang.tip_delete_activity_conf_failed}');
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_delete_activity_conf_error}');
+                }
+            });
+        }
+    }
+
+    function addItems(self, activityId, activityType) {
+
+        $("#itemsForm")[0].reset();
+        $("#opacityDiv").show();
+        $("#saveItems").show();
+        $("#updateItems").hide();
+        $(".field").remove();
+        $("#activity_id").val(activityId);
+        initItemsDiv(self.parents("tr").attr("id"),activityType);
+        $("#itemEditDiv").show();
+    }
+
+    function delActivity(id) {
+        if (confirm("{$Think.lang.tip_confirm_delete_activity}")) {
+            $.ajax({
+                url:"?s=/Home/Activity/ActivityDel",
+                data:{id:id},
+                success:function (msg) {
+                    if (msg == 1) {
+                        alert("{$Think.lang.tip_delete_activity_success}");
+                        $(".content").load("?s=/Home/Activity/show");
+                    } else {
+                        alert("{$Think.lang.tip_delete_activity_failed}");
+                    }
+                },
+                error:function () {
+                    alert('{{$Think.lang.tip_delete_activity_error}}');
+                }
+            });
+        }
+    }
+    function initItemsDiv(type, activityType) {
+        type = type.split("-")[1];
+        $("input[name='category']").val(type);
+        $.ajax({
+            url:"?s=/Home/TypeField/getFiledByType",
+            data:{activityType:activityType, type:type},
+            async:false,
+            success:function (msg) {
+                var items = $.parseJSON(msg.item);
+                msg = msg.fields;
+                var html = ""
+                for (var i = 0,len = msg.length; i < len; i++) {
+                    var str = ""
+                    var field_enum = msg[i].enum;
+                    if (field_enum!=null&&field_enum.length>0) {
+                        field_enum = $.parseJSON(field_enum);
+                        str = "<select name='params-"+msg[i].type_key+"-"+msg[i].type_field+"' id='params-"+msg[i].type_key+"-"+msg[i].type_field+"'>";
+                        for(var key in field_enum){
+                            str += "<option value='"+key+"'>"+field_enum[key]+"[#"+key+"]</option>";
+                        }
+                        str += "</select>"
+                    } else {
+                        var field = msg[i].type_field;
+                        if (msg[i].type_key != "default") {
+                            field = msg[i].type_key + "-" + msg[i].type_field;
+                        }
+                        str = "<input type='text' name='params-" + field + "' id='params-" + field + "'>";
+                        if(msg[i].type_field!=null && msg[i].type_field.indexOf("item")>=0 && msg[i].type_field!="item_number"){
+                            str = "<select class='chosen-select itemName col-lg-5' id='params-"+field+"' data-placeholder='Choose a Country...'"+
+                                    " style='display: none;' name='params-"+field+"' id='params-"+field+"'><option value='0'>{$Think.lang.mail_item_select}</option>"
+                            var itemStr = msg[i].item_id;
+                            for(key in items){
+                                str += "<option value='"+key+"'>"+items[key]+"[#"+key+"]</option>"
+                            }
+                            str +="</select>";
+                        }
+                        if(msg[i].type_field==null || msg[i].type_field.length == 0){str = "";}
+                    }
+                    if(msg[i].type_field!=null && msg[i].type_field.length > 0){
+                        html += "<div class='col-lg-12 col-sm-12 col-xs-12 padding-top field'>" +
+                                "<span class='col-lg-4 align-right'>"+msg[i].type_name + ":</span>" + str + "</div>";
+                    }
+                }
+                $(".name").after(html);
+                $.each($(".itemName"),function(){
+                    $(this).chosen({search_contains:true});
+                })
+            },
+            error:function () {
+                alert('{$Think.lang.tip_get_activity_conf_error}');
+            }
+        });
+    }
+    function activityItems(id) {
+        $("#activity_items_" + id).toggle(
+                function () {
+                    $("#activity_items_" + id).hide();
+                    if ($(".activityItems_" + id).hasClass("glyphicon-plus")) {
+                        $(".activityItems_" + id).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+
+                        var activityType = $("#" + id + "_type").val();
+                        $.ajax({
+                            url:"?s=/Home/TypeField/getTypeKey",
+                            data:{activityType:activityType},
+                            success:function (msg) {
+                                if (msg != null) {
+                                    for (var i = 0,len = msg.length; i < len; i++) {
+                                        var content = msg[i] == null ? "default" : msg[i];
+                                        $("#activity_items_" + id).after($("#activity_items_" + id).clone().attr("id", id + "-" + content).attr("style", ""))
+                                    }
+                                }
+                            }
+                        })
+
+                        $.ajax({
+                            url:"?s=/Home/TypeField/getFieldByTypeId",
+                            data:{id:activityType, activityId:id},
+                            success:function (msg) {
+                                var activityTypes = msg.activityType;
+                                var activityItems = msg.activityItems;
+                                var items = $.parseJSON(msg.item);
+                                var theadArr = [];
+                                var fieldEnum = [];
+                                var fieldArr = [];
+                                if(activityTypes!=null){
+                                for (var i = 0,len = activityTypes.length; i < len; i++) {
+                                    var arr = activityTypes[i]["type_key"];
+                                    if (theadArr[arr] == null) {
+                                        theadArr[arr] = "";
+                                    }
+                                    var str = "<th>" + activityTypes[i]["type_name"] + "</th>";
+                                    if(activityTypes[i]["type_field"]==null || activityTypes[i]["type_field"].length == 0){
+                                        str = "";
+                                    }
+                                    theadArr[arr+"-"+activityTypes[i]["key_name"]] += str;
+                                    if(activityTypes[i]["enum"]!=null){
+                                        fieldEnum[activityTypes[i]["activity_type"]+"_"+activityTypes[i]["type_key"]+"_"+activityTypes[i]["type_field"]] = activityTypes[i]["enum"];
+                                    }
+                                    if(typeof (fieldArr[arr]) == "undefined"){
+                                        fieldArr[arr] = [];
+                                    }
+                                    fieldArr[arr].push(activityTypes[i]["type_field"]);
+                                }
+                                }
+                                for (var key in theadArr) {
+                                    var arr = key.split("-");
+                                    var content = arr[1] == null ? "({$Think.lang.activity_default_type})" : "(" + arr[1] + ")";
+                                    var thead = "<tr><th>" + content + "</th><th>{$Think.lang.activity_configuration_unique}</th><th>{$Think.lang.common_name}</th>"
+                                    content = arr[0] == null || arr[0].length == 0 ? "default" : arr[0];
+                                    $("#" + id + "-" + content + " #" + id + "_item_thead").html("");
+                                    $("#" + id + "-" + content + " #" + id + "_item_tbody").html("");
+                                    $("#" + id + "-" + content + " #" + id + "_item_thead").html(thead + theadArr[key] + "<th>{$Think.lang.common_control}</th></tr>");
+                                }
+                                if (activityItems != null) {
+                                    for (var i = 0,len = activityItems.length; i < len; i++) {
+                                        var field = fieldArr[activityItems[i].category];
+                                        var tbody = ""
+                                        tbody += "<tr id='activity_item_" + activityItems[i].id + "'>";
+                                        tbody += "<td><sapn class='glyphicon glyphicon-plus activity_item_" + activityItems[i].id + "' onclick=rewards(" + activityItems[i].id + ")></sapn></td>";
+                                        tbody += "<td>" + activityItems[i].key + "</td>";
+                                        tbody += "<td>" + activityItems[i].name + "</td>";
+                                        var params = $.parseJSON(activityItems[i].params);
+                                        for (k = 0;k<field.length;k++ ) {
+                                            key = field[k];
+                                            if(key == null){break;}
+                                            if (typeof (params[key]) == "object") {
+                                                for (key1 in params[key]) {
+                                                    tbody += "<td>" + params[key][key1] + "</td>";
+                                                }
+                                            } else {
+                                                var str = params[key];
+                                                var enumStr = fieldEnum[activityType+"_"+activityItems[i].category+"_"+key];
+                                                if((key.indexOf("item")>=0 || key.indexOf("item_id")>=0) && key!= "item_number"){
+                                                    if(typeof (enumStr) == "undefined"){
+                                                        str = items[params[key]];
+                                                        if(typeof (str) == "undefined"){
+                                                            str = "";
+                                                        }else{
+                                                            str += "[#"+params[key]+"]"
+                                                        }
+                                                    }else{
+                                                        var enums = $.parseJSON(enumStr);
+                                                        var tempStr = enums[params[key]]+"[#"+params[key]+"]";
+                                                        if(typeof (tempStr) != "undefined"){
+                                                            str = tempStr;
+                                                        }
+                                                    }
+                                                }else if(enumStr!=null&&enumStr.length>0){
+                                                    var enums = $.parseJSON(enumStr);
+                                                    str = enums[params[key]]+"[#"+params[key]+"]";
+                                                }
+                                                tbody += "<td>" + str + "</td>";
+                                            }
+                                        }
+                                        var controlStr = "<td><sapn class='glyphicon glyphicon-edit small blue' onclick=editItem(" + id + "," + activityItems[i].id + ",'" + id + "-" + activityItems[i].category + "',"+activityType+")>{$Think.lang.common_edit}</sapn>&nbsp;" +
+                                                "<sapn class='glyphicon glyphicon-trash small red' onclick=delItem(" + id + "," + activityItems[i].id + ")>{$Think.lang.common_delete}</sapn></td></tr>";
+                                        tbody += controlStr;
+                                        $("#" + id + "-" + activityItems[i].category + " #" + id + "_item_tbody").append(tbody);
+                                    }
+                                }
+                                fieldEnum = [];
+                            },
+                            error:function () {
+                                alert('{$Think.lang.tip_get_activity_type_field_error}');
+                            }
+                        })
+                    } else {
+                        $("tr[id^='" + id + "']").remove();
+                        $(".activityItems_" + id).removeClass("glyphicon-minus");
+                        $(".activityItems_" + id).addClass("glyphicon-plus")
+                    }
+                }
+        );
+    }
+    function editActivity(id) {
+        $.ajax({
+            url:"?s=/Home/Activity/getActivityById",
+            data:{id:id},
+            success:function (msg) {
+                for (var key in msg) {
+                    $("#activityForm_" + key).val(msg[key]);
+                }
+                $("#real_act_id").val(id);
+            },
+            error:function () {
+                alert("{$Think.lang.tip_get_activity_info_error}");
+            }
+        })
+        $("#opacityDiv").show();
+        $("#activityEditDiv").show();
+        $("#updateActivity").show();
+        $("#saveActivity").hide();
+    }
+    function editItem(activityId, itemId, type,activityType) {
+        $("#opacityDiv").show();
+        $("#saveItems").hide();
+        $("#updateItems").show();
+        $(".field").remove();
+        $("#activity_item_id").val(itemId);
+        $("#activity_id").val(activityId);
+        initItemsDiv(type,activityType);
+        $.ajax({
+            url:"?s=/Home/ActivityItems/getItemById",
+            data:{itemId:itemId},
+            async:false,
+            success:function (msg) {
+                var params = $.parseJSON(msg.params);
+                $.each($("input[id^='params'],select[id^='params']"), function () {
+                    var inputId = $(this).attr("id");
+                    var arr = inputId.split("-");
+                    if (arr.length > 2) {
+                        $(this).val(params[arr[2]])
+                    } else {
+                        $(this).val(params[arr[1]])
+                        $("#params-"+arr[1]).trigger("chosen:updated");
+                    }
+                })
+                for (key in msg) {
+                    $("#itemsForm #params-" + key).val(msg[key]);
+                }
+            },
+            error:function () {
+                alert("{$Think.lang.tip_get_activity_conf_info_error}");
+            }
+        })
+        $("#itemEditDiv").show();
+    }
+    function editAward(itemId, id) {
+        $("#saveReward").hide();
+        $("#updateReward").show();
+        $("#reward_id").val(id);
+        $("#content_id").val(itemId);
+        $.ajax({
+            url:"?s=/Home/Awards/getAwardById",
+            data:{id:id},
+            success:function (msg) {
+                for (key in msg) {
+                    if(key=="params"){
+                        var params = $.parseJSON(msg[key]);
+                        for(pK in params){
+                            $("#reward_" + pK).val(params[pK]);
+                        }
+                    }
+                    $("#reward_" + key).val(msg[key]);
+                    $("#reward_" + key).trigger("chosen:updated");
+                }
+                $("#opacityDiv").show();
+                $("#rewardEditDiv").show();
+            },
+            error:function () {
+                alert("{$Think.lang.tip_get_activity_conf_info_error}");
+            }
+        })
+    }
+    $(function () {
+        $(".date-picker").datepicker();
+        $(".activities").hide();
+
+        $("#addActivity").click(function () {
+            $("#activityForm")[0].reset();
+            $("#opacityDiv").show();
+            $("#activityEditDiv").show();
+            $("#saveActivity").show();
+            $("#updateActivity").hide();
+        });
+        $(".grey").click(function () {
+            $("#opacityDiv").hide();
+            $("#itemEditDiv").hide();
+            $("#activityEditDiv").hide();
+            $("#rewardEditDiv").hide();
+        });
+        $("#searchText").bind("change", function () {
+            $("#reward_item_id").html("");
+            var html = "";
+            $.ajax({
+                url:"?s=/Home/GmManage/vagueItems/itemName/" + $(this).val(),
+                async:false,
+                success:function (msg) {
+                    var result = $.parseJSON(msg);
+                    for (var i = 0,len = result.length; i < len; i++) {
+                        html += "<option value=" + result[i].itemid + ">" + result[i].itemname + "[#" + result[i].itemid + "]</option>";
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_get_item_error}');
+                }
+            });
+            $("#reward_item_id").html(html);
+        });
+        $("#saveItems").click(function () {
+            $.ajax({
+                url:"?s=/Home/ActivityItems/saveActivityItems",
+                data:$("#itemsForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    activityItems(msg);
+                    $("#opacityDiv").hide();
+                    $("#itemEditDiv").hide();
+                    activityItems(msg);
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_add_activity_conf_error}');
+                }
+            });
+        })
+        $("#saveReward").click(function () {
+            $.ajax({
+                url:"?s=/Home/Awards/saveRewards",
+                data:$("#rewardForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    if (msg == 1) {
+                        rewards($("#content_id").val());
+                        $("#opacityDiv").hide();
+                        $("#rewardEditDiv").hide();
+                    } else {
+                        alert(msg);
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_add_activity_awards_error}');
+                }
+            });
+        });
+        $("#saveActivity").click(function () {
+            $.ajax({
+                url:"?s=/Home/Activity/saveActivity",
+                data:$("#activityForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    if (msg == 1) {
+                        $(".content").load("?s=/Home/Activity/show");
+                    } else {
+                        alert("{$Think.lang.tip_add_activity_failed_check}");
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_add_activity_error}');
+                }
+            });
+        });
+        $("#updateActivity").click(function () {
+            $.ajax({
+                url:"?s=/Home/Activity/updateActivity",
+                data:$("#activityForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    if (msg == 1) {
+                        alert('{$Think.lang.tip_edit_activity_success}');
+                        $(".content").load("?s=/Home/Activity/show");
+                    } else {
+                        alert("{$Think.lang.tip_edit_activity_failed}");
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_edit_activity_error}');
+                }
+            })
+        });
+
+        $("#updateItems").click(function () {
+            $.ajax({
+                url:"?s=/Home/ActivityItems/updateItems",
+                data:$("#itemsForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    alert('{$Think.lang.tip_edit_activity_conf_success}');
+                    activityItems(msg);
+                    $("#opacityDiv").hide();
+                    $("#itemEditDiv").hide();
+                    activityItems(msg);
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_edit_activity_conf_error}');
+                }
+            })
+        });
+        $("#updateReward").click(function () {
+            $.ajax({
+                url:"?s=/Home/Awards/updateReward",
+                data:$("#rewardForm").serialize(),
+                type:"POST",
+                success:function (msg) {
+                    if (msg == 1) {
+                        alert('{$Think.lang.left_activity_sync}');
+                        rewards($("#content_id").val());
+                        $("#opacityDiv").hide();
+                        $("#rewardEditDiv").hide();
+                    } else {
+                        alert('{$Think.lang.tip_edit_activity_awards_failed}');
+                    }
+                },
+                error:function () {
+                    alert('{$Think.lang.tip_edit_activity_awards_error}');
+                }
+            })
+        });
+    });
+    $("#act_type").change(function(){
+        $(".content").load("?s=/Home/Activity/show/type/"+$("#act_type").val());
+    });
+</script>

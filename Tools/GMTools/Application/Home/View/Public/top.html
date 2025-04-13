@@ -1,0 +1,59 @@
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+        <a class="" href="index.html">
+            <span class="navbar-brand" style="padding-top: .7em;">
+                <span class="fa fa-paper-plane"></span> {$Think.lang.index_title}
+            </span>
+        </a>
+    </div>
+    <div class="navbar-collapse collapse" style="height: 1px;">
+        <ul id="main-menu" class="nav navbar-nav navbar-right">
+            <li class="dropdown hidden-xs">
+                <a>
+                {$Think.lang.index_change_server}:
+                <select class="monthselect" id="server">
+                    <option value="0">{$Think.lang.index_change_server}</option>
+                    <volist name="Think.session.serverList" id="server" empty="为获取到服务器信息!">
+                        <option value="{$server.id}">{$server.id}</option>
+                    </volist>
+                </select>
+                </a>
+            </li>
+            <li class="dropdown hidden-xs">
+                <a>
+                    <span class="glyphicon glyphicon-user padding-right-small"
+                          style="position:relative;top: 3px;"></span><?php echo session("user")["user_name"]; ?>
+                </a>
+            </li>
+            <li>
+                <a href="__MODULE__/index/logout" style="z-index: 0;">
+                    {$Think.lang.index_logout}<span class="glyphicon glyphicon-log-out padding-right-small btn-xs"></span>
+                </a>
+            </li>
+            <li>
+                <a href="__URL__/main&l=zh-cn" style="padding-right: 0px;">中文&nbsp;|</a>
+            </li>
+            <li>
+                <a href="__URL__/main&l=en-us" style="padding-left: 0px;">&nbsp;English</a>
+            </li>
+        </ul>
+
+    </div>
+</div>
+<script>
+    $(".monthselect").change(function(){
+        $.ajax({
+            url: "__MODULE__/Index/changeServer/serverId/" + $(this).val(),
+            async: false,
+            success: function (msg) {
+                if(msg==1){
+                    alert("切换服务器成功");
+                }
+            },
+            error: function () {
+                alert('切换服务器出错!');
+            }
+        });
+    });
+</script>

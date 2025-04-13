@@ -1,0 +1,168 @@
+<div class="header">
+
+    <h1 class="page-title">{$Think.lang.brief_top_info}</h1>
+
+</div>
+
+<div class="col-md-12">
+    <div class="col-sm-3 padding-bottom">
+        {$Think.lang.common_user_openid}:<input id="openId" type="text" placeholder="{$Think.lang.tip_brief_fuzzy_query}" autofocus="true">
+    </div>
+    <div class="col-sm-2 padding-bottom">
+        {$Think.lang.common_role_name}:<input id="roleName" type="text">
+    </div>
+    <div class="col-sm-3 padding-bottom">
+        <input class="btn btn-primary" value="{$Think.lang.brief_btn_search}" id="searchPlayer" type="button">
+    </div>
+</div>
+<div class="col-xs-12">
+    <div class="table-responsive">
+        <input type="hidden" id="roleOpenId" value="">
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>{$Think.lang.common_role_id}</th>
+                <th>{$Think.lang.common_role_name}</th>
+                <th id="serverid">{$Think.lang.common_serverid}</th>
+                <th id="level">{$Think.lang.common_role_level}</th>
+                <th>{$Think.lang.common_user_openid}</th>
+                <th>{$Think.lang.common_control}</th>
+            </tr>
+            </thead>
+
+            <tbody class="players">
+            <volist name="players" id="player">
+                <tr>
+                    <td>{$player.roleid}</td>
+                    <td>{$player.rolename}</td>
+                    <td>{$player.serverid}</td>
+                    <td>
+                        <div class="btn-toolbar">
+                            <input class="btn btn-danger col-sm-5" type="button" value="{$Think.lang.manage_btn_kick_player}"
+                                   onclick="kick({$player.roleid})">
+                        </div>
+                    </td>
+                </tr>
+            </volist>
+            </tbody>
+        </table>
+    </div><!-- /.table-responsive -->
+</div>
+<!--<div class="col-xs-12">
+    <div class="row">
+        <div class="col-lg-5 col-sm-5 padding-top">
+            <input class="btn btn-danger col-lg-3 col-sm-8 col-xs-6" onclick="manage('banopenid')" type="button" value="封停/解封账号">
+            <input class="btn btn-danger col-lg-3 col-sm-8 col-xs-6" onclick="manage('blackroom')" style="margin-left: 1em;" type="button" value="账号关进小黑屋">
+            <span class="col-lg-5"><input min="1" type="number" id="sec" placeholder="0即为解封">小时</span>
+        </div>
+    </div>
+</div>-->
+<script type="application/javascript">
+    function kick(roleId) {
+        if (confirm("{$Think.lang.tip_confirm_kick}")) {
+            $.ajax({
+                url: "__MODULE__/GmManage/kickPlayer",
+                data:{str:roleId},
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        alert("{$Think.lang.tip_kick_player_success}");
+                        //getPlayerInfo(verifyParams());
+                    } else {
+                        alert("{$Think.lang.tip_kick_player_failed}");
+                    }
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_kick_player_error}');
+                }
+            });
+        }
+    }
+    $("#searchPlayer").click(function () {
+        var param = verifyParams();
+        if(typeof (param)!="undefined"){
+            getPlayerInfo(param);
+        }
+    });
+    function manage(str){
+        var openid = $("#openId").val();
+        if($("#sec").val().length == 0){
+            alert("请输入封禁/解封时间！");
+            return;
+        }
+        if(openid.length>0){
+            $.ajax({
+                url: "__MODULE__/GmManage/manageByOpenid",
+                data:{openid:openid,manage:str,sec:$("#sec").val()},
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        console.log(msg);
+                        if(str == "blackRoom"){
+                            alert("封禁/解封玩家账号小黑屋成功!");
+                        }else{
+                            alert("封禁/解封玩家账号成功!");
+                        }
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                    alert('踢出玩家出错!');
+                }
+            });
+        }else{
+            alert("请先查询玩家确认玩家信息之后再操作！");
+        }
+    }
+    function getPlayerInfo(str){
+        $.ajax({
+            url: "__MODULE__/GmManage/getPlayers",
+            data:{str:str},
+            success: function (msg) {
+                if(str.indexOf("|") == 0){
+                    $("#serverid").hide();
+                    $("#level").show();
+                }else{
+                    $("#serverid").show();
+                    $("#level").hide();
+                }
+                $(".players").html("");
+                if(msg.ret==0){
+                    var userInfo = msg.info;
+                    if(userInfo.length > 0){
+                        $("#roleOpenId").val(userInfo[0].openid);
+                        for (var i = 0; i < userInfo.length; i++) {
+                            var info = "";
+                            if(str.indexOf("|") == 0){
+                                info = userInfo[i].level;
+                            }else{
+                                info = userInfo[i].serverid;
+                            }
+                            var html = "<tr><td>" + userInfo[i].roleid + "</td><td>" + userInfo[i].rolename + "</td> <td>" + info + "</td><td>" 
+                                + userInfo[i].pfid+"</td><td>" + "<div class='btn-toolbar'><input class='btn btn-danger col-sm-5' type='button' value='{$Think.lang.manage_btn_kick_player}' "
+                                    + "onclick=kick(" + userInfo[i].roleid + ")></div></td></tr>";
+                            $(".players").append(html);
+                        }
+                    }else{
+                        alert("未查询到该用户信息！");
+                    }
+                }else{
+                    alert(msg.msg);
+                }
+
+            },
+            error: function () {
+                alert('获取在线玩家列表出错!');
+            }
+        });
+    }
+    function verifyParams(){
+        var openId = $("#openId").val();
+        var roleName = $("#roleName").val();
+        if (openId.length == 0 && roleName.length == 0) {
+            alert("请输入账号或者角色名!");
+        } else {
+            var str = openId + "|" + roleName;
+            return str;
+        }
+    }
+</script>

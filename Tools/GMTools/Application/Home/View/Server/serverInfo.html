@@ -1,0 +1,249 @@
+<script type="text/javascript">
+    function manageServer(id, manage) {
+        if(id == 0){
+            if (manage == "shutdownserver") {
+                if (!confirm("{$Think.lang.tip_close_all_server}")) {
+                    return false;
+                }
+            }else if(manage == "startserver"){
+                if (!confirm("{$Think.lang.tip_start_all_server}?")) {
+                    return false;
+                }
+            }
+        }else{
+            if($(".server_checkbox:checked").length == 0){
+                alert("{$Think.lang.tip_select_one_server}");
+                return false;
+            }else if($(".server_checkbox:checked").length > 0){
+                 id = "";
+                 $.each($(".server_checkbox:checked"),function(i){
+                    id += $(this).val() + ",";
+                 })
+            }
+            if (manage == "shutdownserver") {
+                if (!confirm("{$Think.lang.tip_close_server}")) {
+                    return false;
+                }
+            }else if(manage == "startserver"){
+                if (!confirm("{$Think.lang.tip_start_server}")) {
+                    return false;
+                }
+            }
+        }
+        $.ajax({
+            url: "__MODULE__/Server/manageServer/",
+            data: {serverId: id, manage: manage},
+            success: function (msg) {
+                if (msg.ret == 0) {
+                    alert('{$Think.lang.tip_manage_server_success}');
+                    window.setTimeout("refreshServer(0)",3000);
+                } else {
+                    alert(msg.msg);
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_manage_server_error}');
+            }
+        });
+    }
+    $("#refresh").click(function () {
+        refreshServer(0);
+    });
+    function setOpenTime(manage){
+        var serverId = "";
+        if($("#openTime").val() == ""){
+            alert("请选择开服时间！");
+            return false;
+        }
+        if($(".server_checkbox:checked").length == 0){
+            alert("请选择服务器!");
+            return false;
+        }else if($(".server_checkbox:checked").length >1){
+            alert("只能修改单服开服时间!");
+            return false;
+        }else{
+            var num = 0;
+            serverId = $(".server_checkbox:checked").val();
+            /*$.ajax({
+                url: "__MODULE__/Server/onlineUser/",
+                data: {serverId: serverId},
+                async:false,
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        num = msg.num;
+                        if(num!=0){
+                            num = msg.num;
+                        }
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                }
+            });*/
+            if(num!=0){
+                alert("当前区服有在线玩家，请核实区服再修改区服时间！");
+                return false;
+            }
+        }
+        if (!confirm("确定要修改"+serverId+"服务器开服时间?")) {
+            return false;
+        }else{
+            $.ajax({
+		        url: "__MODULE__/Server/setOpenTime",
+                data: {serverId: serverId, openTime: $("#openTime").val()},
+                async:false,
+                success: function (msg) {
+                    if (msg.errno == 0) {
+                        alert('修改服务器开服时间成功!');
+                        window.setTimeout("refreshServer(0)",3000);
+                    } else {
+                        alert(msg.errmsg);
+                    }
+                },
+                error: function () {
+                    alert('服务器出错!');
+                }
+            });
+        }
+    }
+    function refreshServer(id) {
+        $.ajax({
+            url: "__MODULE__/Server/refreshServer",
+            data: {serverId: id},
+            success: function (msg) {
+                msg = JSON.stringify(msg);
+                msg = $.parseJSON(msg);
+                if (msg.ret != 0) {
+                    alert(msg.msg);
+                } else {
+                    alert("{$Think.lang.tip_refresh_server_success}");
+                    $(".content").load("__MODULE__/Server/show");
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_refresh_server_failed}');
+            }
+        });
+    }
+    function onlineUser() {
+        var serverId = "";
+        if($(".server_checkbox:checked").length >1){
+            alert("{$Think.lang.tip_select_batch_server}");
+        }else{
+            serverId = $(".server_checkbox:checked").val();
+            if(serverId == null || serverId.length == 0){
+                serverId = "0";
+            }
+            $.ajax({
+                url: "__MODULE__/Server/onlineUser/",
+                data: {serverId: serverId},
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        alert("{$Think.lang.tip_online_user}" + msg.num + "人");
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_online_user_error}');
+                }
+            });
+        }
+    }
+    function getServerInfo(){
+        var serverId = "";
+        if($(".server_checkbox:checked").length == 0){
+            alert("{$Think.lang.tip_select_one_server}");
+        }else if($(".server_checkbox:checked").length >1){
+            alert("{$Think.lang.tip_get_server_info_select}");
+        }else{
+            serverId = $(".server_checkbox:checked").val();
+            $.ajax({
+                url: "__MODULE__/Server/getServerInfo/",
+                data: {serverId: serverId},
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        var sInfo = "{$Think.lang.server_tip1}"+msg.info.ip + "<br>{$Think.lang.server_tip2}" + msg.info.opentime + "<br>{$Think.lang.server_tip3}"+msg.info.openday + "{$Think.lang.common_day}";
+                        $("#serverInfo").html(sInfo);
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_get_server_info_error}');
+                }
+            });
+        }
+    }
+    $("#allCheck").click(function () {
+        $(".server_checkbox").prop("checked", $(this).prop("checked"))
+    });
+    $("#plat").change(function(){
+            $.ajax({
+                url:"__MODULE__/Server/refreshServer",
+                data:{serverId:0},
+                type:"POST",
+                success:function(msg){
+                    var serverList = msg.list;
+                    var htmlArr = [];
+                    for(var i =0;i<serverList.length;i++){
+                        var html = '<div class="col-lg-2 col-sm-2 col-xs-3 init"><input type="checkbox" value="'+
+                                serverList[i].id+'" name="serverid[]" class="server_checkbox">'+serverList[i].id+
+                                "&nbsp;&nbsp;"+serverList[i].time+"<span style='color: red;'>|</span>"+serverList[i].day+"天</div>";
+                        htmlArr.push(html);
+                    }
+                    $(".init").remove();
+                    $("#serverTitle").after(htmlArr.join(""));
+                },
+                error:function(){
+                }
+            })
+    })
+</script>
+
+<div class="header">
+    <h1 class="page-title">{$Think.lang.server_top_info}</h1>
+</div>
+<div class="col-sm-12 col-xs-12">
+    <div class="col-md-12" style="margin-top: 1em;margin-bottom: 1em;">
+        <button class="btn btn-primary" id="refresh"><i class="fa fa-refresh"></i> {$Think.lang.server_refresh_server_list}</button>
+<!--        &nbsp;&nbsp;&nbsp;&nbsp;渠道:
+        <select id="plat">
+            <option>选择渠道</option>
+        <volist name="Think.session.gm_url" id="plat">
+            <option value="{$key}">{$key}</option>
+        </volist>
+        </select>-->
+    </div>
+
+    <div class="col-md-12" style="margin-bottom: 1em;" id="serverTitle">
+        <input type="checkbox" id="allCheck">{$Think.lang.common_select_all}
+    </div>
+    <volist name="Think.session.serverList" id="server">
+        <div class="col-lg-2 col-sm-2 col-xs-3 init">
+            <input type="checkbox" value="{$server.id}" name="serverid[]" class="server_checkbox">
+            <if condition="$server.state eq 0">
+                <span style="color: red;">{$server.id}</span>&nbsp;&nbsp;{$server.time}<span>|</span>{$server.day}天|</span>{$server.playernum}人
+            <elseif condition ="$server.playernum eq 0" />
+                <span style="color: blue;">{$server.id}</span>&nbsp;&nbsp;{$server.time}<span>|</span>{$server.day}天|</span>{$server.playernum}人
+            <else />
+                {$server.id}&nbsp;&nbsp;{$server.time}<span>|</span>{$server.day}天|</span>{$server.playernum}人
+            </if>
+        </div>
+    </volist>
+    <div class="col-md-12" style="margin-top: 1em;">
+        <button class='btn btn-primary' onclick="getServerInfo()"><span class='glyphicon glyphicon-info-sign'> {$Think.lang.server_server_info}</span> </button>&nbsp;
+        <button class='btn btn-primary' onclick="onlineUser()"><span class='glyphicon glyphicon-info-sign'>当前实时在线人数</span> </button>&nbsp;
+        <button class='btn btn-success' onclick="manageServer(1,'startserver')"> <span class='glyphicon glyphicon-ok'> {$Think.lang.server_start_server}</span></button>
+        <button class='btn btn-danger' onclick="manageServer(1,'shutdownserver')"> <span class='glyphicon glyphicon-remove'> {$Think.lang.server_close_server}</span></button>
+	    <input class="date-picker" id="openTime" name="openTime" data-date-format="yyyy-mm-dd" type="text" readonly="">
+        <button class='btn btn-primary' onclick="setOpenTime('setopentime')"> <span class='glyphicon glyphicon-remove'> 修改服务器开服时间</span></button>
+        <button class="btn btn-success" style="float: right;" onclick="manageServer(0,'startserver')"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.server_onekey_start_server}</button>
+        <button class="btn btn-danger" style="float: right;margin-right: 1em;" onclick="manageServer(0,'shutdownserver')"><span class="glyphicon glyphicon-remove"></span> {$Think.lang.server_onekey_close_server}</button>
+    </div>
+</div>
+<div class="col-sm-12" style="margin: 1em;" id="serverInfo"></div>
+<script type="text/javascript">
+    $("input[name$='Time']").datetimepicker({format:'yyyy/mm/dd hh:ii:ss'});
+</script>

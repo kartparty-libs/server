@@ -1,0 +1,123 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_activity_sync}</h1>
+</div>
+<div class="col-md-12 ">
+    <form id="syncForm">
+    <div class="col-md-12 header" style="padding-top: 1em;">
+        <div class="col-md-5">{$Think.lang.shelf_list}</div>
+    </div>
+    <volist name="goods" id="good">
+        <div class="col-lg-2 col-sm-3 col-xs-4">
+            <input type="checkbox" value="{$good.id}" name="good[]">{$good.name}
+        </div>
+    </volist>
+
+    <!-- <div class="col-md-12 header" style="padding-top: 1em;">
+        <div class="col-md-5">渠道列表</div>
+    </div>
+    <volist name="Think.session.gm_url" id="plat">
+        <div class="col-lg-2 col-sm-3 col-xs-4">
+            <input type="radio" value="{$key}" name="plat" class="">{$key}
+        </div>
+    </volist> -->
+
+    <div class="col-md-12 header" style="padding-top: 3em;">
+        <div class="col-md-5">{$Think.lang.left_server_list}</div>
+    </div>
+    <div class="col-md-12" style="margin-bottom: 1em;" id="serverTitle">
+        <input type="checkbox" id="allCheck">{$Think.lang.common_all}&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="allServer" name="all"><span style="color: red;">所有服</span>
+    </div>
+    <volist name="Think.session.serverList" id="server">
+        <div class="col-lg-2 col-sm-2 col-xs-3 init">
+            <input type="checkbox" value="{$server.id}" name="serverid[]" class="server_checkbox">{$server.id}&nbsp;&nbsp;{$server.time}<span style="color: red;">|</span>{$server.day}天
+        </div>
+    </volist>
+
+    <div class="col-md-9" style="margin-top: 4em;">
+        <div class="btn-toolbar list-toolbar">
+            <input type="button" class="btn btn-success blue" id="syncGoods" value="{$Think.lang.sync_activity}">
+        </div>
+    </div>
+    </form>
+</div>
+        <script type="text/javascript">
+            $("#allCheck").click(function () {
+                $(".server_checkbox").prop("checked", $(this).prop("checked"))
+            });
+            var ifSubmit = false;
+            $("#syncGoods").click(function(){
+                var serverCount = $("input[name='serverid[]']:checked").length;
+                var goodCount = $("input[name='good[]']:checked").length;
+                var all = $("#allServer:checked").val();
+                if(goodCount==0){
+                    alert("{$Think.lang.tip_select_goods}");
+                    return;
+                }else if(serverCount==0 && all == ""){
+                    alert("{$Think.lang.tip_select_server}");
+                    return;
+                }
+                if(typeof(all) != "undefined"){
+                    if(!confirm("确定要同步所有服?")){
+                        return;
+                    }
+                }
+                if(ifSubmit){
+                    alert("{$Think.lang.tip_sync_goods_wait}");
+                }else{
+                    ifSubmit = true;
+                    $.ajax({
+                        url:"__MODULE__/Goods/sync",
+                        data:$("#syncForm").serializeArray(),
+                        type:"POST",
+                        success:function(msg){
+                            var html = "";
+                            for(key in msg){
+                                if(key == "0"){
+                                    html = "同步全服活动成功!";
+                                }else{
+                                    html+="{$Think.lang.sync_tip1}"+key+"{$Think.lang.sync_tip2}";
+                                    if(msg[key]==0){
+                                        html+= "{$Think.lang.common_success}!\r"
+                                    }else{
+                                        html+= "{$Think.lang.common_failed}!\r"
+                                    }
+                                }
+                            }
+                            ifSubmit = false;
+                            alert(html);
+                        },
+                        error:function(){
+                            ifSubmit = false;
+                            alert("{$Think.lang.tip_sync_goods_error}");
+                        }
+                    })
+                }
+            });
+            $("input[name='plat']").click(function(){
+                var platLength = $("input[name='plat']:checked").length;
+                if(platLength>1){
+                    alert("只能选择一个平台!");
+                }else{
+                    $.ajax({
+                        url:"__MODULE__/Server/refreshServer",
+                        data:{serverId:0},
+                        type:"POST",
+                        success:function(msg){
+                            var serverList = msg.list;
+                            var htmlArr = [];
+                            for(var i =0;i<serverList.length;i++){
+                                var html = '<div class="col-lg-2 col-sm-2 col-xs-4 init"><input type="checkbox" value="'+
+                                        serverList[i].id+'" name="serverid[]" class="server_checkbox">'+serverList[i].id+"&nbsp;&nbsp;"+
+                                        serverList[i].time+"<span style='color: red;'>|</span>"+serverList[i].day+"天</div>";
+                                htmlArr.push(html);
+                            }
+                            $(".init").remove();
+                            $("#serverTitle").after(htmlArr.join(""));
+                        },
+                        error:function(){
+                        }
+                    })
+                }
+            })
+        </script>

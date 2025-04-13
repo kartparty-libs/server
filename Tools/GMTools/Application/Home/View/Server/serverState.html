@@ -1,0 +1,187 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_server_state}</h1>
+</div>
+<div class="col-xs-12">
+    <div class="col-md-12" style="margin-top: 1em;margin-bottom: 1em;">
+        <button class="btn btn-primary" id="refresh">
+            <i class="fa fa-refresh"></i> {$Think.lang.server_refresh_server_list}</button>
+    </div>
+    <div class="col-lg-2 col-sm-7 col-xs-7 padding-bottom">
+            <span class="col-lg-5 col-sm-4 col-xs-6">{$Think.lang.server_taid}:</span>
+            <input id="selecttaid" type="text" class="col-lg-7 col-sm-8 col-xs-6">
+    </div>  
+    <div class="col-lg-2 col-sm-7 col-xs-7 padding-bottom">
+            <button class="btn btn-primary" id="selectServer">
+                <i class="fa fa-refresh"></i> {$Think.lang.server_selecttaid}</button>
+     </div> 
+     <div class="col-lg-4 col-sm-7 col-xs-7 padding-bottom">
+            <button class="col-lg-3 col-sm-7 col-xs-7 btn btn-primary" id="onekeyopen">
+                <i class="fa fa-refresh"></i> {$Think.lang.server_open}</button>
+            <select  name='openstatetype' id="onerkeyopenvalue">
+                <option value='4'>{$Think.lang.shelf_state_type4}</option>
+                <option value='2'>{$Think.lang.shelf_state_type2}</option>
+                <option value='3'>{$Think.lang.shelf_state_type3}</option>
+            </select>
+     </div> 
+     <div class="col-lg-2 col-sm-7 col-xs-7 padding-bottom">
+            <button class="btn btn-primary" id="onerkeyclose">
+                <i class="fa fa-refresh"></i> {$Think.lang.server_close}</button>
+     </div>                      
+    <div class="table-responsive">
+        <input type="hidden" id="roleOpenId" value="">
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>{$Think.lang.server_taid}</th>
+                    <th>{$Think.lang.common_serverid}</th>
+                    <th>{$Think.lang.common_serverstate}</th>
+                    <th>{$Think.lang.common_serveralter}</th>
+                    <th>{$Think.lang.common_control}</th>
+                </tr>
+            </thead>
+
+            <tbody class="players">
+            </tbody>
+        </table>
+    </div>
+    <!-- /.table-responsive -->
+</div>
+
+<script type="application/javascript">
+    function manage(id,pfid, i, nstate) {
+        var state
+        if( nstate){
+            state = nstate
+        }else{
+            state = $("#type_" + i).val()
+        }
+        $.ajax({
+            url: "__MODULE__/Server/SetServerState",
+            data: { serverId: id, pf:pfid,status: state },
+            success: function (msg) {
+                if (msg) {
+                    refreshServerState(0);
+                } else {
+                    alert('{$Think.lang.tip_manage_error}');
+                }
+            },
+            error: function (msg) {
+                alert('{$Think.lang.tip_manage_error}');
+            }
+        });
+    }
+    $("#refresh").click(function () {
+        refreshServerState(0);
+    });
+
+    var stateEume = {
+        "0":'{$Think.lang.shelf_state_type0}',
+        "1":'{$Think.lang.shelf_state_type1}',
+        "2":'{$Think.lang.shelf_state_type2}',
+        "3":'{$Think.lang.shelf_state_type3}',
+        "4":'{$Think.lang.shelf_state_type4}',
+    }
+    var stateColor = {
+        "0":"<span style = color:#ff1cae>",
+        "1":"<span style = color:#c0c0c0>",
+        "2":"<span style = color:#ff0000>",
+        "3":"<span style = color:#00ff00>",
+        "4":"<span style = color:#ff7f00>",
+    }
+
+    var otName = {
+        "1":"微信正式服----->>",
+        "1000":"微信提审服----->>",
+        "2":"联运正式服----->>",
+        "3":"联运正式服----->>",
+        "1001":"联运提审服----->>",
+        "101":"玩吧安卓服----->>",
+        "102":"玩吧正式服----->>",
+        "111":"玩一玩测试服----->>",
+    }
+
+
+    $("#onekeyopen").click(function () {
+        oneKeyOpen();
+    });
+    function oneKeyOpen() {
+        var ttaid = $("#selecttaid").val();
+        if (ttaid == ""){
+            return
+        }
+        for (var i = 0; i < serverInfo.length; i++) {
+            if(ttaid != serverInfo[i]["pf"] || serverInfo[i]["status"] == "0"  ){
+                continue
+            } 
+            manage(serverInfo[i]["serverid"], serverInfo[i]["pf"], i , $("#onerkeyopenvalue").val())
+        } 
+    }
+
+    $("#onerkeyclose").click(function () {
+        oneKeyClose();
+    });
+    function oneKeyClose() {
+        var ttaid = $("#selecttaid").val();
+        if (ttaid == ""){
+            return
+        }
+        for (var i = 0; i < serverInfo.length; i++) {
+            if(ttaid != serverInfo[i]["pf"] || serverInfo[i]["status"] == "0"  ){
+                continue
+            } 
+            manage(serverInfo[i]["serverid"], serverInfo[i]["pf"], i , "1")
+        } 
+    }
+
+    $("#selectServer").click(function () {
+        selectServerState();
+    });
+    var serverInfo = { }
+    function selectServerState() {
+        var ttaid = $("#selecttaid").val();
+        $(".players").html("");
+        for (var i = 0; i < serverInfo.length; i++) {
+            if(ttaid != "" && ttaid != serverInfo[i]["pf"] ){
+                continue
+            }
+            var str = otName[serverInfo[i]["pf"]]
+            if (!str){
+                str = "----->>"
+            }
+            var html = "<tr><td>" + str + serverInfo[i]["pf"] + "</td><td>" + serverInfo[i]["serverid"] + "</td><td>"+stateColor[serverInfo[i]["status"]]+ stateEume[serverInfo[i]["status"]] + "</td><td>" +
+                "<select class='col-lg-4 padding' name='statetype' style='margin-right: .5em;'id='type_" + i + "'><option value='0'>{$Think.lang.shelf_state_type0}</option><option value='1'>{$Think.lang.shelf_state_type1}</option><option value='2'>{$Think.lang.shelf_state_type2}</option><option value='3'>{$Think.lang.shelf_state_type3}</option><option value='4'>{$Think.lang.shelf_state_type4}</option>'>" + "</td><td>" +
+                "<input class='btn btn-danger' onclick=manage('" + serverInfo[i]["serverid"] + "','" + serverInfo[i]["pf"] + "'," + i + ") type='button' value='{$Think.lang.common_submit}'></td></tr>";
+            $(".players").append(html);
+        }
+    }
+
+
+
+    function refreshServerState(id) {
+        $.ajax({
+            url: "__MODULE__/Server/refreshServerState",
+            data: { serverId: id },
+            success: function (msg) {
+                if (msg.length > 0) {
+                    $(".players").html("");
+                    serverInfo = msg
+                    for (var i = 0; i < msg.length; i++) {
+                        var str = otName[msg[i]["pf"]]
+                        if (!str){
+                            str = "----->>"
+                        }
+                        var html = "<tr><td>" +  str + msg[i]["pf"] + "</td><td>" + msg[i]["serverid"] + "</td><td>"+stateColor[msg[i]["status"]]+ stateEume[msg[i]["status"]] + "</td><td>" +
+                            "<select class='col-lg-4 padding' name='statetype' style='margin-right: .5em;'id='type_" + i + "'><option value='0'>{$Think.lang.shelf_state_type0}</option><option value='1'>{$Think.lang.shelf_state_type1}</option><option value='2'>{$Think.lang.shelf_state_type2}</option><option value='3'>{$Think.lang.shelf_state_type3}</option><option value='4'>{$Think.lang.shelf_state_type4}</option>'>" + "</td><td>" +
+                            "<input class='btn btn-danger' onclick=manage('" + msg[i]["serverid"] + "','" + msg[i]["pf"] + "'," + i + ") type='button' value='{$Think.lang.common_submit}'></td></tr>";
+                        $(".players").append(html);
+                    }
+                } else {
+                    alert("{$Think.lang.tip_refresh_server_failed}");
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_refresh_server_failed}');
+            }
+        });
+    }    
+</script>

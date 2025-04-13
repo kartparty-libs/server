@@ -1,0 +1,85 @@
+<div class="header">
+
+    <h1 class="page-title">在线玩家信息查询</h1>
+
+</div>
+
+<div class="col-md-12">
+    <div class="col-md-9" style="margin-top: 1em;">
+        <div class="btn-toolbar list-toolbar">
+            <button class="btn btn-success" id="search"><span class="glyphicon glyphicon-ok"></span> 刷新在线玩家列表
+            </button>
+        </div>
+    </div>
+</div>
+<div class="col-xs-12">
+    <div class="table-responsive">
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>角色ID</th>
+                <th>角色名称</th>
+                <th>角色等级</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody class="players">
+            <volist name="players" id="player">
+                <tr>
+                    <td>{$player.roleid}</td>
+                    <td>{$player.rolename}</td>
+                    <td>{$player.rolelv}</td>
+                    <td>
+                        <div class="btn-toolbar">
+                            <input class="btn btn-danger col-sm-3" type="button" value="踢出玩家"
+                                   onclick="kick({$player.roleid})">
+                        </div>
+                    </td>
+                </tr>
+            </volist>
+            </tbody>
+        </table>
+    </div><!-- /.table-responsive -->
+</div>
+<script type="application/javascript">
+    function kick(roleId) {
+        if (confirm("确定要踢出该玩家吗?")) {
+            $.ajax({
+                url: "__MODULE__/GmManage/kickPlayer/str/" + roleId,
+                success: function (msg) {
+                    if (msg == 1) {
+                        alert("踢出玩家成功!");
+                        refreshPlayers();
+                    } else {
+                        alert("踢出玩家失败!");
+                    }
+                },
+                error: function () {
+                    alert('踢出玩家出错!');
+                }
+            });
+        }
+    }
+    $("#search").click(function () {
+        refreshPlayers();
+    });
+    function refreshPlayers(){
+        $.ajax({
+            url: "__MODULE__/GmManage/getPlayers",
+            success: function (msg) {
+                var result = $.parseJSON(msg);
+                $(".players").html("");
+                for (var i = 0; i < result.length; i++) {
+                    var html = "<tr><td>" + result[i].roleid + "</td><td>" + result[i].rolename + "</td> <td>" + result[i].rolelv + "</td><td>"
+                            + "<div class='btn-toolbar'><input class='btn btn-danger col-sm-3' type='button' value='踢出玩家' "
+                            + "onclick=kick(" + result[i].roleid + ")></div></td></tr>";
+                    $(".players").append(html);
+                }
+            },
+            error: function () {
+                alert('获取在线玩家列表出错!');
+            }
+        });
+    }
+</script>

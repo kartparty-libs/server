@@ -1,0 +1,124 @@
+<div class="sidebar-nav">
+    <ul style="margin: 0px;">
+        <li data-popover="true" rel="popover" data-placement="right">
+            <a href="#" data-target=".premium-menu" class="nav-header collapsed" data-toggle="collapse">
+                <i class="fa fa-fw fa-fighter-jet"></i><span>{$Think.lang.left_server_manage}</span><i class="fa fa-collapse"></i>
+            </a>
+        </li>
+        <li>
+            <ul class="premium-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/Server/show")><span class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_server_list}</a>
+                 <?php if(session("user")["isadmin"] != 2){ ?> 
+                    <li><a href="#" onclick=loadUrl("__MODULE__/Server/serverState")><span class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_server_state}</a>
+                    <li><a href="#" onclick=loadUrl("__MODULE__/Server/serverNotice")><span class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_server_notice}</a>
+                <?php } ?>
+                <?php if(session("user")["isadmin"]==1){ ?> 
+                    <li><a href="#" onclick=loadUrl("__MODULE__/Server/serverUpData")><span class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_server_updata}</a>
+                 <?php } ?>
+                </li>
+            </ul>
+        </li>
+        <?php if(session("user")["isadmin"] != 2){ ?> 
+        <li>
+            <a href="#" data-target=".gm-menu" class="nav-header collapsed" data-toggle="collapse">
+                <sapn class="glyphicon glyphicon-tasks"></sapn>
+                <span>{$Think.lang.left_gm_operate}</span><i class="fa fa-collapse"></i>
+            </a>
+        </li>
+        <li>
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/noticePage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_gm_notice}</a></li>
+            </ul>
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/getPlayerInfo")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_player_briefinfo}</a></li>
+            </ul>
+            <ul class="gm-menu nav nav-list collapse">
+                    <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/chargeInfoPage")><span
+                            class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_charge_info}</a></li>
+                </ul>            
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/batchUserInfoPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_batch_player_briefinfo}</a></li>
+            </ul>
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/playerDetailPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_manage_player}</a></li>
+            </ul>
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/kickPlayerPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;踢出玩家</a></li>
+            </ul>
+            <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/sendMailPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_send_server_mail}</a></li>
+            </ul>
+            <!-- <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/onlineUser")><span
+                        class="fa fa-caret-right"></span>&nbsp;实时在线</a></li>
+            </ul> -->
+            <!-- <ul class="gm-menu nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/GmManage/userLogPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.user_log_page}</a></li>
+            </ul> -->
+        </li>
+        <li>
+            <a href="#" data-target=".activity" class="nav-header collapsed" data-toggle="collapse">
+                <sapn class="glyphicon glyphicon-list-alt"></sapn>
+                <span>{$Think.lang.left_activity_manage}</span><i class="fa fa-collapse"></i>
+            </a>
+        </li>
+        <li>
+            <ul class="activity nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/Activity/show")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_activity_configuration}</a></li>
+            </ul>
+            <ul class="activity nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/Goods/show")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_shelf_configuration}</a></li>
+            </ul>
+            <ul class="activity nav nav-list collapse">
+                <li><a href="#" onclick=loadUrl("__MODULE__/Goods/syncPage")><span
+                        class="fa fa-caret-right"></span>&nbsp;{$Think.lang.left_activity_sync}</a></li>
+            </ul>
+        </li>
+        <?php } ?>
+        <?php if(session("user")["isadmin"]==1){ ?>
+            <li>
+                <a href="#" data-target=".baseconfig-menu" class="nav-header collapsed" data-toggle="collapse">
+                    <sapn class="glyphicon glyphicon-cog"></sapn>
+                    </i> {$Think.lang.left_base_configuration}<i class="fa fa-collapse"></i>
+                </a>
+            </li>
+            <li>
+                <ul class="baseconfig-menu nav nav-list collapse">
+                    <li><a href="#" onclick=loadUrl("__MODULE__/TypeField/show")><span class="fa fa-caret-right"></span>
+                        {$Think.lang.left_activity_field_conf}</a></li>
+                </ul>
+            </li>
+            <li>
+                <ul class="baseconfig-menu nav nav-list collapse">
+                    <li><a href="#" onclick=loadUrl("__MODULE__/TypeField/channelUrlPage")><span class="fa fa-caret-right"></span>
+                        平台URL地址管理</a></li>
+                </ul>
+            </li>
+        <?php } ?>
+            <li>
+                <a href="#" data-target=".dashboard-menu" class="nav-header collapsed" data-toggle="collapse"><i
+                        class="fa fa-fw fa-dashboard"></i> {$Think.lang.left_user_info_manage_log}<i class="fa fa-collapse"></i></a>
+            </li>
+            <li>
+                <!-- <ul class="dashboard-menu nav nav-list collapse">
+                    <li><a href="#" onclick=loadUrl("__MODULE__/UserInfo/show")><span class="fa fa-caret-right"></span>
+                        {$Think.lang.left_user_info_manage}</a></li>
+                </ul> -->
+                <ul class="dashboard-menu nav nav-list collapse">
+                    <li><a href="#" onclick=loadUrl("__MODULE__/UserInfo/operateLog")><span class="fa fa-caret-right"></span>
+                        {$Think.lang.left_user_info_manage_log}</a></li>
+                </ul>
+            </li>
+    </ul>
+</div>
+
+

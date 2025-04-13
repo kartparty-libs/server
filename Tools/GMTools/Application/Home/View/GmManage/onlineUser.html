@@ -1,0 +1,51 @@
+<script src="__PUBLIC__/js/Chart.js"></script>
+<div class="header">
+    <h1 class="page-title">实时在线人数</h1>
+</div>
+<div class="col-sm-12 padding-bottom">
+    <div class="col-sm-2 padding-top">
+        开始时间:<input class="date-picker" id="startTime" data-date-format="yyyy-mm-dd" type="text" readonly>
+    </div>
+    <div class="col-sm-2 padding-top">
+        结束时间:<input class="date-picker" id="endTime" data-date-format="yyyy-mm-dd" type="text" readonly>
+    </div>
+    <div class="col-sm-3 padding-top">
+        <input class="btn btn-primary" value="查询" id="searchLog" type="button">
+    </div>
+</div>
+<div class="col-sm-12">
+    <div>
+        <canvas id="canvas" class="col-sm-8"></canvas>
+    </div>
+</div>
+<script>
+    $(".date-picker").datepicker();
+    var randomScalingFactor = function () {
+        return Math.round(Math.random() * 100)
+    };
+    var lables = {$result.dataType};
+    var data = {$result.data};
+    var lineChartData = {
+        labels: lables,
+        datasets: [
+            {
+                label: "My Second dataset",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: data
+            }
+        ]
+
+    };
+
+    $(document).ready(function () {
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myLine = new Chart(ctx).Line(lineChartData, {
+            responsive: true
+        });
+    })
+</script>

@@ -1,0 +1,640 @@
+<div class="header">
+
+    <h1 class="page-title">{$Think.lang.manage_player_top_info}</h1>
+
+</div>
+
+<div class="col-sm-12  col-xs-12">
+    <div class="col-lg-3 col-sm-7 col-xs-7 padding-bottom">
+        <span class="col-lg-5 col-sm-4 col-xs-6">{$Think.lang.common_role_id}:</span>
+        <input id="roleId" type="text" class="col-lg-7 col-sm-8 col-xs-6">
+    </div>
+    <div class="col-lg-4 col-sm-5 col-xs-5 padding-bottom">
+        <input class="btn btn-primary" value="{$Think.lang.brief_btn_search}" id="searchPlayer" type="button">
+    </div>
+</div>
+<div class="playerDiv">
+    <div class="col-sm-12  col-xs-12">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4>{$Think.lang.manage_player_detail_info}</h4>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.common_role_id}:<span class="roleId padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.common_role_name}:<span class="roleName padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.common_role_level}:<span class="level padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_mapid}:<span class="mapId padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_role_type}:<span class="roleProf padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_viplevel}:<span class="vipLv padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_create_time}:<span class="createTime padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_ban_expire_time}:<span class="banPlay padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_ban_speak_time}:<span class="banSpeak padding-left"></span>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_gold}:<span class="gold padding-left"></span>
+                        </div>
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_trans_level}:<span class="translevel padding-left"></span>
+                        </div>
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                                {$Think.lang.player_win_num}:<span class="winnum padding-left"></span>
+                        </div>
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                                {$Think.lang.player_guild_name}:<span class="guildname padding-left"></span>
+                        </div>
+                        <div class="col-lg-3 col-sm-3 col-xs-6 padding-top">
+                            {$Think.lang.player_last_logout}:<span class="last_logout padding-left"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 col-xs-12">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4>{$Think.lang.manage_player_top_info}</h4>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-4 padding-top">
+                            <input class="btn btn-danger col-lg-4 col-sm-8 col-xs-6" type="button" value="{$Think.lang.manage_btn_kick_player}"
+                                   id="kick">
+                        </div>
+                        <div class="col-lg-4 col-sm-4 padding-top">
+                            <div id="banPlayDiv">
+                                <input class="btn btn-danger col-lg-4 col-sm-8 col-xs-6" type="button" value="{$Think.lang.player_ban}"
+                                       id="banPlay">
+                                <span class="col-lg-7"><input min="1" type="number" id="banPlayTime">{$Think.lang.common_hours}</span>
+                            </div>
+                            <div style="display: none" id="unBanPlayDiv">
+                                <input class="btn btn-success col-lg-4 col-sm-8 col-xs-6" type="button" value="{$Think.lang.player_unban}"
+                                       id="unBanPlay">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-4 padding-top">
+                            <div id="banSpeakDiv">
+                                <input class="btn btn-danger col-lg-4 col-sm-8 col-xs-6" type="button" value="{$Think.lang.player_ban_peak}"
+                                       id="banSpeak">
+                                <span class="col-lg-7"><input min="1" type="number" id="banSpeakTime">{$Think.lang.common_hours}</span>
+                            </div>
+                            <div style="display: none" id="unBanSpeakDiv">
+                                <input class="btn btn-success col-lg-4 col-sm-8 col-xs-6" type="button" value="{$Think.lang.player_unban_peak}"
+                                       id="unBanSpeak">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-header widget-header-flat">
+                <h4>{$Think.lang.player_send_mail}</h4>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div class="row" style="padding: 1em;">
+                        <label class="col-lg-2 col-sm-2 col-xs-2 control-label no-padding-left" for="title">
+                            {$Think.lang.mail_title}: </label>
+
+                        <div class="col-lg-4 col-sm-5 col-xs-8">
+                                <input id="title" placeholder="{$Think.lang.mail_title}" class="col-sm-12" type="text" name="title">
+                        </div>
+                    </div>
+                    <div class="row" style="padding: 1em;">
+                        <label class="col-lg-2 col-sm-2 col-xs-2 control-label no-padding-left" for="content">
+                            {$Think.lang.mail_content}: </label>
+
+                        <div class="col-lg-4 col-sm-5 col-xs-8">
+        <textarea class="col-sm-12" style="resize: none;height: 5em;" class="form-control" id="content"
+                  placeholder="{$Think.lang.mail_content}"
+                  name="content"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="itemDiv" class="row">
+                        <div class="col-lg-12 padding-bottom padding-top">
+                            <div class="col-lg-3 center ">
+                                <button class="btn btn-warning addItem" id="refresh"><i class="fa fa-plus"></i> {$Think.lang.mail_add_item_option}
+                                </button>
+                            </div>
+                            <div class="col-lg-9">
+                                <span class="help-block red smaller-90">{$Think.lang.mail_tip}</span>
+                            </div>
+                        </div>
+                        <div class="item_row" style="margin-top: 1em;">
+                            <div class="col-lg-6 col-sm-4 col-xs-12">
+                                <label class="col-lg-4 col-sm-6">{$Think.lang.mail_item_select}:</label>
+                                <select class="chosen-select itemName col-lg-5" id="form-field-select-3" data-placeholder="Choose a Country..."
+                                        style="display: none;" name="item">
+                                    <option value="0">{$Think.lang.mail_item_select}</option>
+                                    <volist name="items" id="item">
+                                        <option value="{$item.itemid}">{$item.itemname}</option>
+                                    </volist>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 col-sm-4 col-xs-12">
+                                <label class="col-lg-4 col-sm-6">{$Think.lang.item_number}:</label>
+                                <input class="number col-lg-3" placeholder="number" min="1" type="number" style="margin-bottom: 1em;">
+                                <span class="glyphicon glyphicon-trash fa-lg red remove inline col-lg-3" style="">{$Think.lang.common_delete}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-sm-offset-3">
+                        <button class="btn btn-success" id="sendMail"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.mail_send}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat">
+                    <h4>{$Think.lang.player_charge}</h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                            <label class="col-lg-1 col-sm-1 col-xs-1 control-label no-padding-left" for="title">
+                                {$Think.lang.player_charge_num}: </label>
+                                <select name="charge-select" id="charge-select">
+                                    <option value="1" >648</option>
+                                    <option value="2" >128</option>
+                                    <option value="3" >6</option>
+                                    <option value="4" >328</option>
+                                    <option value="5" >98</option>
+                                    <option value="6" >12</option>
+                                    <option value="7" >198</option>
+                                    <option value="8" >60</option>
+                                    <option value="9" >30</option>
+                                    <option value="11" >998</option>
+                                    <option value="12" >98</option>
+                                    <option value="13" >6</option>
+                                    <option value="14" >1998</option>
+                                    <option value="15" >198</option>
+                                    <option value="16" >30</option>
+                                    <option value="17" >2998</option>
+                                    <option value="18" >488</option>
+                                    <option value="19" >50</option>
+                                </select> 
+                            <div class="row col-sm-offset-3">
+                                <button class="btn btn-success" id="charge_send"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.charge_send}
+                                </button>
+                            </div>                            
+                    </div>
+                </div>
+            </div> 
+    </div> 
+    <div class="col-sm-12">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat">
+                    <h4>{$Think.lang.limit_gift}</h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                            <label class="col-lg-1 col-sm-1 col-xs-1 control-label no-padding-left" for="title">
+                                {$Think.lang.knowe_type}: 
+                                <select name="limit-select" id="limit-select">
+                                        <option value="1" >神兵</option>
+                                        <option value="2" >翅膀</option>
+                                        <option value="3" >法宝</option>
+                                        <option value="4" >法阵</option>
+                                        <option value="5" >经脉</option>
+                                        <option value="6" >内功</option>
+                                        <option value="7" >宠物</option>
+                                        <option value="9" >时装</option>
+                                </select>     
+                            </label>
+                            <label class="col-lg-1 col-sm-1 col-xs-1 control-label no-padding-left" for="title">
+                                    {$Think.lang.knowe_gift}:
+                                    <select name="gift-select" id="gift-select">
+                                            <option value="101" >神兵礼包1</option>
+                                            <option value="102" >翅膀礼包1</option>
+                                            <option value="103" >法宝礼包1</option>
+                                            <option value="104" >法阵礼包1</option>
+                                            <option value="105" >经脉礼包1</option>
+                                            <option value="106" >内功礼包1</option>
+                                            <option value="107" >宠物礼包1</option>
+                                            <option value="108" >时装礼包1</option>
+                                        </select>   
+                            </label> 
+                            <div class="row col-sm-offset-3">
+                                <button class="btn btn-success" id="charge_limit"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.buy_send}
+                                </button>
+                            </div>                            
+                    </div>
+                </div>
+            </div>
+     </div>  
+    <div class="col-sm-12">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat">
+                    <h4>{$Think.lang.other_card}</h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <label class="col-lg-1 col-sm-1 col-xs-1 control-label no-padding-left" for="title">
+                                {$Think.lang.card_type}:</label>    
+                        <select name="card-select" id="card-select">
+                                <option value="1" >铂金卡</option>
+                                <option value="2" >钻石卡</option>
+                            </select>                                            
+                     </div>
+                    <div class="row col-sm-offset-3">
+                            <button class="btn btn-success" id="charge_card"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.buy_send}
+                            </button>
+                    </div>
+                </div>
+            </div>                    
+    </div>
+    <div class="col-sm-12">
+            <div class="widget-box">
+                <div class="widget-header widget-header-flat">
+                    <h4>{$Think.lang.activity_charge}</h4>
+                </div>
+                <div class="widget-body">
+                    <div class="widget-main">
+                        <div class="col-lg-3 col-sm-7 col-xs-7 padding-bottom">
+                            <span class="col-lg-5 col-sm-4 col-xs-6">{$Think.lang.activity_id}:</span>
+                            <input id="activityId" type="text" class="col-lg-7 col-sm-8 col-xs-6">
+                        </div>
+                        <div class="col-lg-3 col-sm-7 col-xs-7 padding-bottom">
+                                <span class="col-lg-5 col-sm-4 col-xs-6">{$Think.lang.activity_version}:</span>
+                                <input id="version" type="text" class="col-lg-7 col-sm-8 col-xs-6">
+                        </div> 
+                        <div class="col-lg-3 col-sm-7padding-bottom">
+                                <span class=>{$Think.lang.activity_gift}:</span>
+                                <select name="activity-gift" id="activity-gift">
+                                        <option value="1" >1</option>
+                                        <option value="2" >2</option>
+                                        <option value="3" >3</option>
+                                        <option value="4" >4</option>
+                                        <option value="5" >5</option>
+                                        <option value="6" >6</option>
+                                        <option value="7" >7</option>
+                                        <option value="8" >8</option>
+                                        <option value="9" >9</option>
+                                        <option value="10" >10</option>
+                                </select>
+                        </div> 
+                        <div class="col-lg-3 col-sm-7 padding-bottom">
+                                <span class=>{$Think.lang.activity_price}:</span>
+                                <select name="activity-price" id="activity-price">
+                                        <option value="1" >6</option>
+                                        <option value="2" >12</option>
+                                        <option value="3" >30</option>
+                                        <option value="4" >50</option>
+                                        <option value="5" >60</option>
+                                        <option value="6" >78</option>
+                                        <option value="7" >98</option>
+                                        <option value="8" >128</option>
+                                        <option value="9" >148</option>
+                                        <option value="10" >168</option>
+                                        <option value="11" >198</option>
+                                        <option value="12" >328</option>
+                                        <option value="13" >488</option>
+                                        <option value="14" >998</option>
+                                        <option value="15" >1998</option>
+                                        <option value="16" >2998</option>
+                                </select>                                      
+                        </div>                                                                               
+                        <div class="row col-sm-offset-3">
+                            <button class="btn btn-success" id="buy_send"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.buy_send}
+                            </button>
+                        </div>  
+                    </div>
+                </div>    
+            </div>
+    </div>           
+</div>
+
+<script type="application/javascript">
+    var divHtml = $(".item_row").html();;
+    initSelect();
+    function initSelect(){
+        $.each($(".itemName"),function(){
+            $(this).chosen({search_contains:true});
+        })
+    }
+    var roleId = "";
+    $(".playerDiv").hide();
+    $(".playerDiv").children("div").hide();
+    $("#kick").click(function () {
+        if (confirm("{$Think.lang.tip_confirm_kick}")) {
+            $.ajax({
+                url: "__MODULE__/GmManage/kickPlayer",
+                data: {str: roleId},
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        alert("{$Think.lang.tip_kick_player_success}");
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_kick_player_error}');
+                }
+            });
+        }
+    });
+    $("#banPlay").click(function () {
+        var time = $("#banPlayTime").val()
+        if (time.length > 0) {
+            if (confirm("{$Think.lang.tip_confirm_ban_player}")) {
+                banPlay(roleId, time);
+                $("#unBanPlayDiv").show();
+                $("#banPlayDiv").hide();
+            }
+        } else {
+            alert("{$Think.lang.tip_input_ban_time}");
+        }
+    });
+    $("#unBanPlay").click(function () {
+        banPlay(roleId, 0);
+        $("#unBanPlayDiv").hide();
+        $("#banPlayDiv").show();
+    });
+    function banPlay(roleId, time) {
+        $.ajax({
+            url: "__MODULE__/GmManage/banPlay",
+            data: {roleId: roleId, time: time},
+            success: function (msg) {
+                if (msg.ret == 0) {
+                    alert("{$Think.lang.tip_ban_player_success}");
+                    getPlayerInfo(roleId);
+                } else {
+                    alert(msg.msg);
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_ban_player_error}');
+            }
+        });
+    }
+
+
+    $("#banSpeak").click(function () {
+        var time = $("#banSpeakTime").val()
+        if (time.length > 0) {
+            if (confirm("{$Think.lang.tip_confirm_ban_speak}")) {
+                banSpeak(roleId, time);
+                $("#unBanSpeakDiv").show();
+                $("#banSpeakDiv").hide();
+            }
+        } else {
+            alert("{$Think.lang.tip_ban_speak_time}");
+        }
+    });
+    $("#unBanSpeak").click(function () {
+        banSpeak(roleId, 0);
+        $("#unBanSpeakDiv").hide();
+        $("#banSpeakDiv").show();
+    });
+    function banSpeak(roleId, time) {
+        $.ajax({
+            url: "__MODULE__/GmManage/banSpeak",
+            data: {roleId: roleId, time: time},
+            success: function (msg) {
+                if (msg.ret == 0) {
+                    alert("{$Think.lang.tip_ban_speak_success}");
+                    getPlayerInfo(roleId);
+                } else {
+                    alert(msg.msg);
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_ban_speak_error}');
+            }
+        });
+    }
+    $("#searchPlayer").click(function () {
+        roleId = $("#roleId").val();
+        if (roleId.length > 0) {
+            getPlayerInfo(roleId);
+            $(".playerDiv").show();
+        } else {
+            alert("{$Think.lang.tip_input_role_id}");
+        }
+    });
+    var SRoleName = ""
+    var PfId = ""
+
+    function getPlayerInfo(roleId) {
+        $.ajax({
+            url: "__MODULE__/GmManage/getPlayerDetail",
+            data: {roleId: roleId},
+            success: function (msg) {
+                if (msg.ret == 0) {
+                    if(typeof (msg.info)!="undefined"){
+                        msg.info = msg.info[0]
+                        SRoleName = msg.info.rolename
+                        PfId = msg.info.pfid
+                        $(".roleId").html(msg.info.roleid);
+                        $(".roleName").html(msg.info.rolename);
+                        $(".level").html(msg.info.level);
+                        $(".mapId").html(msg.info.mapid);
+                        $(".roleProf").html(msg.info.roleprof);
+                        $(".vipLv").html(msg.info.vip);
+                        $(".createTime").html((new Date(msg.info.createts * 1000)).toLocaleString());
+                        $(".gold").html(msg.info.gold);
+                        $(".translevel").html(msg.info.translevel);
+                        $(".winnum").html(msg.info.winnum);
+                        $(".guildname").html(msg.info.guildname);
+                        $(".last_logout").html( (new Date(msg.info.last_logout * 1000)).toLocaleString());
+                        var now = (new Date()).valueOf() / 1000;
+
+                        var banplay = msg.info.banplaytime;
+                        if (banplay > now) {
+                            $("#banPlayDiv").hide();
+                            $("#unBanPlayDiv").show();
+                        }
+                        var banPlayTime = banplay > 0 ? (new Date(banplay * 1000)).toLocaleString() : 0;
+                        $(".banPlay").html(banPlayTime);
+
+                        var banspeak = msg.info.banspeaktime;
+                        if (banspeak > now) {
+                            $("#banSpeakDiv").hide();
+                            $("#unBanSpeakDiv").show();
+                        }
+                        var banSpeakTime = banspeak > 0 ? (new Date(banspeak * 1000)).toLocaleString() : 0;
+                        $(".banSpeak").html(banSpeakTime);
+
+                        $(".playerDiv").children("div").show();
+                    }else{
+                        alert("{$Think.lang.batch_no_player}");
+                    }
+                } else {
+                    alert(msg.msg);
+                }
+
+            },
+            error: function () {
+                alert('{$Think.lang.tip_get_player_info_error}');
+            }
+        });
+    }
+    $("div").delegate(".remove","click",function () {
+        if ($(".remove").length != 1) {
+            $(this).parent().parent().remove();
+        } else {
+            alert("{$Think.lang.tip_item_retain}");
+            return false;
+        }
+    })
+    $(".addItem").click(function () {
+        if ($(".item_row").length >= 4) {
+            alert("{$Think.lang.tip_max_items}");
+        } else {
+            $("#itemDiv").append("<div class='item_row'>"+divHtml+"</div>");
+            initSelect();
+        }
+    });
+    $("#sendMail").click(function () {
+        var bool = true;
+        var item = "0";
+        var num = "0";
+
+        var title = $("#title").val();
+        var content = $("#content").val();
+        bool = verifyParam(roleId, title, content);
+        if ($(".chosen-select").length > 1 || $(".number").eq(0).val() != "") {
+            $(".chosen-select").each(function (i) {
+                if ($(this).val() == "" || $(".number").eq(i).val() == "") {
+                    bool = false;
+                    alert("{$Think.lang.tip_input_num_error}");
+                    return bool;
+                } else {
+                    item += $(this).val() + ",";
+                    num += $(".number").eq(i).val() + ",";
+                }
+            })
+        }
+        if (bool) {
+            $.ajax({
+                url: "__MODULE__/GmManage/sendMail/roleId/"+roleId+"/title/" + title + "/content/" + content + "/item/" + item + "/num/" + num,
+                success: function (msg) {
+                    msg.ret == 0 ? alert("{$Think.lang.tip_send_mail_success}") : alert(msg.msg);
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_send_mail_error}');
+                }
+            });
+        }
+    })
+
+
+    $("#charge_send").click(function () {
+        var chargeID = $("#charge-select option:selected").val()
+        var nMoney = $("#charge-select option:selected").text()  
+        var tbcommonParam = { }
+        tbcommonParam[1] = "1111"
+        rechareg(chargeID,nMoney,tbcommonParam)   
+    })
+
+    $("#buy_send").click(function () {
+        var chargeID = "10000"
+        var nMoney = $("#activity-price option:selected").text() 
+        var tbcommonParam = {}
+        var activityid =  $("#activityId").val() + "|" + $("#version").val()
+        tbcommonParam[1]  = activityid
+        tbcommonParam[2]  = $("#activity-gift option:selected").text() 
+        tbcommonParam[3]  = "1"    
+        rechareg(chargeID,nMoney,tbcommonParam)   
+    })
+
+    $("#charge_limit").click(function () {
+        var chargeID = $("#gift-select option:selected").val()
+        var nMoney = "12"
+        var tbcommonParam = {}
+        tbcommonParam[1]  = $("#limit-select option:selected").val() 
+        rechareg(chargeID,nMoney,tbcommonParam)   
+    })
+
+    var cardMoneyEume = {
+        "1":"30",
+        "2":"168",
+    }
+    var chargeidEume = {
+        "1":"201",
+        "2":"202",
+    }
+    $("#charge_card").click(function () {
+        var type = $("#card-select option:selected").val()
+        var chargeID = chargeidEume[type]
+        var nMoney = cardMoneyEume[type]
+        var tbcommonParam = {}
+        tbcommonParam[1]  = type
+        rechareg(chargeID,nMoney,tbcommonParam)   
+    })
+
+
+
+   function rechareg(chargeID, nMoney, tbcommonParam) {
+       if (!chargeID || !nMoney || !tbcommonParam){
+           return
+       }
+    $.ajax({
+            url: "__MODULE__/GmManage/PlayerCharge",
+            data: {roleId: roleId, chargeid: chargeID, money:nMoney, rolename:SRoleName,  uid:PfId, commonParam:tbcommonParam},
+            success: function (msg) {
+                if (msg.ret == 0) {
+                    alert("{$Think.lang.charge_success}");
+                } else {
+                alert('{$Think.lang.charge_failed}');
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.charge_failed}');
+            }
+        });
+    }
+
+    function verifyParam(roleId, title, content) {
+        if (roleId == "") {
+            alert("{$Think.lang.tip_get_player}")
+            return false;
+        } else if (title == "") {
+            alert("{$Think.lang.tip_mail_title_error}")
+            return false;
+        } else if (content == "") {
+            alert("{$Think.lang.tip_mail_content_error}")
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>

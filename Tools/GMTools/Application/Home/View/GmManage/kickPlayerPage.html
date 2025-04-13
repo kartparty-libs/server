@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    $("#kick").click(function () {
+        var roleId = $("#roleId").val();
+        var roleName = $("#roleName").val();
+        if (roleId.length == 0 && roleName == 0) {
+            alert("请输入角色ID或者角色名!");
+        } else {
+            var str = roleId + "|" + roleName;
+            $.ajax({
+                url: "__MODULE__/GmManage/kickPlayer/str/" + str,
+                success: function (msg) {
+                    if (msg.ret == 0) {
+                        alert("{$Think.lang.tip_kick_player_success}");
+                    } else {
+                        alert(msg.msg);
+                    }
+                },
+                error: function () {
+                    alert('{$Think.lang.tip_kick_player_error}');
+                }
+            });
+        }
+
+    })
+</script>
+<div class="header">
+    <h1 class="page-title">踢出在线玩家</h1>
+</div>
+<div class="form-horizontal" action="#">
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="roleId"> {$Think.lang.common_role_id}: </label>
+
+        <div class="col-sm-5">
+            <input id="roleId" placeholder="roleid" class="col-xs-10 col-sm-5" type="text">
+        </div>
+    </div>
+
+    <div class="space-4"></div>
+
+    <div class="form-group">
+        <label class="col-sm-3 control-label no-padding-right" for="roleName"> {$Think.lang.common_role_name}: </label>
+
+        <div class="col-sm-5">
+            <input id="roleName" placeholder="rolename" class="col-xs-10 col-sm-5" type="text">
+        </div>
+    </div>
+
+    <div class="space-4"></div>
+
+    <div class="col-md-offset-3 col-md-9">
+        <div class="btn-toolbar list-toolbar">
+            <input class="btn btn-danger col-lg-1" type="button" value="{$Think.lang.manage_btn_kick_player}" id="kick">
+        </div>
+    </div>
+
+</div>

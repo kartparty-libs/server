@@ -1,0 +1,769 @@
+<style type="text/css" xmlns="http://www.w3.org/1999/html">
+    .zhankai {
+        width: 3em;
+    }
+
+    table {
+        font-size: 1em;
+    }
+
+    .editDiv {
+        width: 27%;
+        height: auto;
+        position: absolute;
+        left: 33%;
+        top: 23%;
+        padding: 0px;
+        border: 0;
+        position: fixed;
+    }
+</style>
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_shelf_configuration}</h1>
+</div>
+<div class="col-xs-12">
+    <div class="table-responsive">
+        <button class="btn btn-primary addGoods" style="margin-bottom: 1em;">
+            <sapn class="glyphicon glyphicon-plus small ">&nbsp;{$Think.lang.shelf_add}</sapn>
+        </button>
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="zhankai"></th>
+                <th>ID</th>
+                <th>{$Think.lang.common_name}</th>
+                <th>{$Think.lang.shelf_world}</th>
+                <th>{$Think.lang.shelf_channel}</th>
+                <th>{$Think.lang.shelf_online}</th>
+                <th>{$Think.lang.common_order}</th>
+                <th>{$Think.lang.common_control}</th>
+            </tr>
+            </thead>
+            <tbody class="players">
+            <volist name="goodsShelf" id="goods">
+                <tr>
+                    <td>
+                        <sapn class="glyphicon glyphicon-plus zhankai_{$goods.id}"
+                              onclick="zhankai({$goods.id})"></sapn>
+                    </td>
+                    <td>{$goods.id}</td>
+                    <td>{$goods.name}</td>
+                    <td>{$goods.world}</td>
+                    <td>{$goods.channels}</td>
+                    <td>
+                        <eq name="goods.is_online" value="1">{$Think.lang.common_yes}
+                            <else/>
+                            {$Think.lang.common_no}
+                        </eq>
+                    </td>
+                    <td>{$goods.order}</td>
+                    <td>
+                        <sapn class="glyphicon glyphicon-edit small blue" onclick=editGoods({$goods.id})>
+                            {$Think.lang.common_edit}
+                        </sapn>
+                        &nbsp;
+                        <sapn class="glyphicon glyphicon-trash small red" onclick=delGoods({$goods.id})>
+                            {$Think.lang.common_delete}
+                        </sapn>
+                    </td>
+                </tr>
+                <tr class="activities" id="activity_info_{$goods.id}">
+                    <td></td>
+                    <td colspan="8">
+                        <div>
+                            <button class="btn btn-primary" style="margin-bottom: .5em;"
+                                    onclick=addActivity({$goods.id})>
+                                <sapn class="glyphicon glyphicon-plus small">{$Think.lang.shelf_add_activity}</sapn>
+                            </button>
+                            <button class="btn btn-primary" style="margin-bottom: .5em;"
+                                    onclick=editActivityTime({$goods.id})>
+                                <sapn class="glyphicon glyphicon-edit small">批量修改活动时间</sapn>
+                            </button>
+                            <table id="sample-table-2" class="table table-striped table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>{$Think.lang.shelf_activity_id}</th>
+                                    <th>{$Think.lang.shelf_activity_name}</th>
+                                    <th>{$Think.lang.activity_status}</th>
+                                    <th>{$Think.lang.shelf_activity_level_limit}</th>
+                                    <th>{$Think.lang.shelf_activity_show_start}</th>
+                                    <th>{$Think.lang.shelf_activity_show_end}</th>
+                                    <th>{$Think.lang.shelf_activity_start}</th>
+                                    <th>{$Think.lang.shelf_activity_end}</th>
+                                    <th>{$Think.lang.shelf_activity_version}</th>
+                                    <th>{$Think.lang.common_order}</th>
+                                    <th>{$Think.lang.common_control}</th>
+                                </tr>
+                                </thead>
+                                <tbody id="{$goods.id}_activity">
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </volist>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- /.table-responsive -->
+</div>
+<div class="page-content"
+     style="display: none;background: #000000;width: 100%;height: 100%;position: fixed;top: 0;left: 0;opacity: .3;"
+     id="opacityDiv">
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="goodsEditDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.shelf_info}</h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="goodsForm">
+                        <input type="hidden" name="id" id="goodsForm_id">
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_name}:</span><input type="text"
+                                                                                                       name="name"
+                                                                                                       id="goodsForm_name">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_world}:</span>
+                            <select class="chosen-select" id="world" data-placeholder="Choose a Server..." multiple
+                                    style="display: none;" name="world[]">
+                                <option value="0">{$Think.lang.index_change_server}</option>
+                                <volist name="Think.session.serverList" id="server" empty="">
+                                    <option value="{$server.id}">{$server.id}</option>
+                                </volist>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_channel}:</span><input type="text"
+                                                                                                         name="channels"
+                                                                                                         id="goodsForm_channels">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_online}:</span>
+                            <select name="is_online">
+                                <option value="1">{$Think.lang.common_yes}</option>
+                                <option value="0">{$Think.lang.common_no}</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_order}:</span><input type="text"
+                                                                                                        name="order"
+                                                                                                        id="goodsForm_order">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveGoods"
+                                   value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateGoods"
+                                   value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;"
+                                   value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="activityEditDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.shelf_activity_configuration}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="activityForm">
+                        <input type="hidden" name="id" id="id">
+                        <input type="hidden" name="good_id" id="activityForm_id">
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity}:</span>
+                            <!--<select name="activity" id="activity" class="chosen-select" data-placeholder="" style="display: none;">
+                                <volist name="goodsShelf" id="acti">
+                                    <option value="{$acti.name}_{$acti.id}">{$acti.name}(#{$acti.id})</option>
+                                </volist>
+                            </select>-->
+                            <select class="chosen-select itemName col-lg-5" data-placeholder="Choose a Country..."
+                                    style="display: none;" name="activity">
+                                <option value=""></option>
+                                <volist name="act" id="act_info">
+                                    <option value="{$act_info.name}_{$act_info.id}">{$act_info.name}(#{$act_info.id})</option>
+                                </volist>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.activity_status}:</span>
+                            <select name="state" id="state">
+                                <option value="0">无[#0]</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_level_limit}:</span><input
+                                min="1" type="number" name="level" id="level">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_show_start}:</span>
+                            <select class="col-lg-3 padding" name="show_start-type" style="margin-right: .5em;"
+                                    id="show_start-type">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="show_start-date1" name="show_start-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="display: none;margin-right: .5em;width: 7em;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="show_start-date2"><input
+                                    name="show_start-date" min="1" type="number" style="margin-right: .5em;width: 5em;">{$Think.lang.common_day}
+                            </div>
+                            <div class="input-group bootstrap-timepicker col-lg-2">
+                                <input type="text" name="show_start-time" style="width: 7em;" id="show_start-time"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_show_end}:</span>
+                            <select class="col-lg-3 padding" name="show_end-type" style="margin-right: .5em;"
+                                    id="show_end-type">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="show_end-date1" name="show_end-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="margin-right: .5em;width: 7em;display: none;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="show_end-date2"><input name="show_end-date"
+                                                                                                    min="1"
+                                                                                                    type="number"
+                                                                                                    style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="show_end-time" style="width: 7em;" id="show_end-time"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_start}:</span>
+                            <select class="col-lg-3 padding" name="start_time-type" style="margin-right: .5em;"
+                                    id="start_time-type">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="start_time-date1" name="start_time-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="margin-right: .5em;width: 7em;display: none;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="start_time-date2"><input
+                                    name="start_time-date" min="1" type="number" style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="start_time-time" style="width: 7em;" id="start_time-time"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_end}:</span>
+                            <select class="col-lg-3 padding" name="end_time-type" style="margin-right: .5em;"
+                                    id="end_time-type">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="end_time-date1" name="end_time-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="display: none;margin-right: .5em;width: 7em;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="end_time-date2"><input name="end_time-date"
+                                                                                                    min="1"
+                                                                                                    type="number"
+                                                                                                    style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="end_time-time" style="width: 7em;" id="end_time-time"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_version}:</span><input
+                                type="text" name="version" id="version" value="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.common_order}:</span><input type="text"
+                                                                                                        name="order"
+                                                                                                        id="order" value="1">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveGoodActivity"
+                                   value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateGoodActivity"
+                                   value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;"
+                                   value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-xs-12 editDiv" id="activityTimeDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>活动时间批量修改</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row">
+                    <form id="timeForm">
+                        <input type="hidden" name="id" id="good_id">
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_show_start}:</span>
+                            <select class="col-lg-3 padding" name="show_start-type" style="margin-right: .5em;">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="show_start-date3" name="show_start-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="display:none;margin-right: .5em;width: 7em;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="show_start-date4"><input
+                                    name="show_start-date" min="1" type="number" style="margin-right: .5em;width: 5em;">{$Think.lang.common_day}
+                            </div>
+                            <div class="input-group bootstrap-timepicker col-lg-2">
+                                <input type="text" name="show_start-time" style="width: 7em;"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_show_end}:</span>
+                            <select class="col-lg-3 padding" name="show_end-type" style="margin-right: .5em;">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="show_end-date3" name="show_end-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="margin-right: .5em;width: 7em;display: none;" placeholder="请选择日期">
+
+                            <div class="col-lg-3" id="show_end-date4">
+                                <input name="show_end-date" min="1" type="number"
+                                                                                                    style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="show_end-time" style="width: 7em;"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_start}:</span>
+                            <select class="col-lg-3 padding" name="start_time-type" style="margin-right: .5em;">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" name="start_time-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="margin-right: .5em;width: 7em;display: none;" placeholder="请选择日期" id="start_time-date3">
+
+                            <div class="col-lg-3" id="start_time-date4"><input
+                                    name="start_time-date" min="1" type="number" style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="start_time-time" style="width: 7em;"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.shelf_activity_end}:</span>
+                            <select class="col-lg-3 padding" name="end_time-type" style="margin-right: .5em;">
+                                <option value="2">{$Think.lang.shelf_activity_data_type3}</option>
+                                <option value="0">{$Think.lang.shelf_activity_data_type1}</option>
+                                <option value="1">{$Think.lang.shelf_activity_data_type2}</option>
+                            </select>
+                            <input class="col-lg-2 date" id="end_time-date3" name="end_time-date"
+                                   data-date-format="yyyy/mm/dd" type="text" readonly=""
+                                   style="margin-right: .5em;width: 7em;display: none;" placeholder="请选择日期" disabled>
+
+                            <div class="col-lg-3" id="end_time-date4" ><input name="end_time-date"
+                                                                                                    min="1"
+                                                                                                    type="number"
+                                                                                                    style="margin-right: .5em;width: 5em;">天
+                            </div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" name="end_time-time" style="width: 7em;"
+                                       value="00:00" readonly/>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="updateGoodTime"
+                                   value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" id="cancel" style="margin: 1em;"
+                                   value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript">
+$(".date").datepicker();
+$("select[name$='type']").change(function () {
+    var index = $(this).val();
+    var name = $(this).attr("name").split("-")[0];
+    if (index != 0) {
+        $("#" + name + "-date1").hide();
+        $("#" + name + "-date1").attr("disabled", true)
+        $("#" + name + "-date2 input").attr("disabled", false)
+        $("#" + name + "-date2").show();
+
+        $("#" + name + "-date3").hide();
+        $("#" + name + "-date3").attr("disabled", true)
+        $("#" + name + "-date4 input").attr("disabled", false)
+        $("#" + name + "-date4").show();
+
+    } else {
+        $("#" + name + "-date2").hide();
+        $("#" + name + "-date2 input").attr("disabled", true)
+        $("#" + name + "-date1").attr("disabled", false)
+        $("#" + name + "-date1").show();
+
+        $("#" + name + "-date4").hide();
+        $("#" + name + "-date4 input").attr("disabled", true)
+        $("#" + name + "-date3").attr("disabled", false)
+        $("#" + name + "-date3").show();
+    }
+});
+$(".activities").hide();
+$("#world").chosen({search_contains:true});
+$(".itemName").chosen({search_contains:true});
+$("input[name$='time']").timepicker({
+    minuteStep:1,
+    showMeridian:false
+}).next().on(ace.click_event, function () {
+            $(this).prev().focus();
+        });
+function zhankai(id) {
+    $("#activity_info_" + id).toggle(
+            function () {
+                if ($(".zhankai_" + id).hasClass("glyphicon-plus")) {
+                    $(".zhankai_" + id).removeClass("glyphicon-plus");
+                    $(".zhankai_" + id).addClass("glyphicon-minus");
+                    $.ajax({
+                        url:"?s=/Home/ActivityRelation/getActivitiesByGoodId",
+                        data:{id:id},
+                        success:function (msg) {
+                            $("#" + id + "_activity").html("");
+                            for (var i = 0, len = msg.length; i < len; i++) {
+                                var activityInfo = "<tr id='relation_" + msg[i].id + "'>"
+                                activityInfo += "<td>" + msg[i].id + "</td>";
+                                activityInfo += "<td>" + msg[i].name + "[#" + msg[i].activity_id + "]</td>";
+                                activityInfo += "<td>无[#" + msg[i].state + "]</td>";
+                                activityInfo += "<td>" + msg[i].level + "</td>";
+                                activityInfo += "<td>" + parseDateJson(msg[i].show_start) + "</td>";
+                                activityInfo += "<td>" + parseDateJson(msg[i].show_end) + "</td>";
+                                activityInfo += "<td>" + parseDateJson(msg[i].start_time) + "</td>";
+                                activityInfo += "<td>" + parseDateJson(msg[i].end_time) + "</td>";
+                                activityInfo += "<td>" + msg[i].version + "</td>";
+                                activityInfo += "<td>" + msg[i].order + "</td>";
+                                activityInfo += "<td>";
+                                activityInfo += "<sapn class='glyphicon glyphicon-edit small blue' onclick=editGoodsRelation(" + id + "," + msg[i].id + "," + msg[i].activity_id +",'" + msg[i].name + "')>{$Think.lang.common_edit}</sapn>&nbsp;";
+                                activityInfo += "<sapn class='glyphicon glyphicon-trash small red' onclick='delGoodsRelation(" + msg[i].id + ")'>{$Think.lang.common_delete}</sapn>";
+                                activityInfo += "</td></tr>";
+                                $("#" + id + "_activity").append(activityInfo);
+                            }
+                        },
+                        error:function () {
+                            alert('Server error!');
+                        }
+                    });
+                } else {
+                    $(".zhankai_" + id).removeClass("glyphicon-minus");
+                    $(".zhankai_" + id).addClass("glyphicon-plus")
+                }
+            }
+    );
+}
+function parseDateJson(date) {
+    if (date != null) {
+        date = $.parseJSON(date);
+        if (date.type == 0) return date.date + " " + date.time
+        if (date.type == 2) return "{$Think.lang.shelf_tip1}" + date.date + "{$Think.lang.common_day} " + date.time
+        if (date.type == 1) return "{$Think.lang.shelf_tip2}" + date.date + "{$Think.lang.common_day} " + date.time
+    }
+}
+function delGoods(id) {
+    if (confirm("{$Think.lang.tip_confirm_delete_goods}")) {
+        $.ajax({
+            url:"?s=/Home/Goods/GoodsDel",
+            data:{id:id},
+            success:function (msg) {
+                if (msg == 1) {
+                    alert("{$Think.lang.tip_delete_goods_success}");
+                    $(".zhankai_" + id).parent().parent().remove();
+                    $("#activity_info_" + id).remove();
+                } else {
+                    alert("{$Think.lang.tip_delete_goods_failed}!");
+                }
+            },
+            error:function () {
+                alert('Server error!');
+            }
+        });
+    }
+}
+function editGoods(goodId) {
+    $.ajax({
+        url:"?s=/Home/Goods/getGoodById",
+        data:{goodId:goodId},
+        type:"POST",
+        success:function (msg) {
+            if (msg != null) {
+                $("#goodsForm_id").val(goodId);
+                for (key in msg) {
+                    $("input[name='" + key + "']").val(msg[key]);
+                }
+                $("#updateGoods").show();
+                $("#saveGoods").hide();
+                $("#opacityDiv").show();
+                $("#goodsEditDiv").show();
+            } else {
+                alert("{$Think.lang.tip_get_shelf_conf_error}");
+            }
+        },
+        error:function () {
+            alert("Server error!");
+        }
+    })
+}
+function addActivity(goodId) {
+    //getGoodActivities()
+    $("#activityForm")[0].reset();
+    //$("#activity").html("");
+    $("#activityForm_id #id").val("");
+    $("#activityForm_id").val(goodId);
+    $("#saveGoodActivity").show();
+    $("#updateGoodActivity").hide();
+    $("#opacityDiv").show();
+    $("#activityEditDiv").show();
+}
+function editActivityTime(goodId) {
+    $("#opacityDiv").show();
+    $("#activityTimeDiv").show();
+    $("#good_id").val(goodId);
+}
+$("#updateGoodTime").click(function () {
+    $.ajax({
+        url:"__MODULE__/ActivityRelation/editActivityTime",
+        data:$("#timeForm").serialize(),
+        type:"POST",
+        success:function () {
+            alert("修改成功！");
+            $("#opacityDiv").hide();
+            $("#activityTimeDiv").hide();
+            zhankai($("#good_id").val());
+        }
+    });
+});
+/*
+function getGoodActivities(idx) {
+    $.ajax({
+        url:"?s=/Home/Activity/getActivities",
+        success:function (msg) {
+            if (msg != null) {
+                for (key in msg) {
+                    if (idx == key) {
+                        $("#activity").append("<option value='" + msg[key] + "_" + key + "' selected>" + msg[key] + "[#" + key + "]</option>")
+                    } else {
+                        $("#activity").append("<option value='" + msg[key] + "_" + key + "'>" + msg[key] + "[#" + key + "]</option>")
+                    }
+                }
+            } else {
+                alert("{$Think.lang.tip_get_activity_list_failed}")
+            }
+        },
+        error:function () {
+            alert("Server error!");
+        }
+    })
+}*/
+function editGoodsRelation(goodId, relationId, activityId,name) {
+    $("#saveGoodActivity").hide();
+    $("#updateGoodActivity").show();
+    $("#activityForm #id").val(relationId);
+    $("#activityForm_id").val(goodId);
+    $.ajax({
+        url:"?s=/Home/ActivityRelation/getRelationById",
+        data:{id:relationId},
+        success:function (msg) {
+            if (msg != null) {
+                //getGoodActivities(activityId);
+                for (key in msg) {
+                    if (msg[key].indexOf('":') > 0) {
+                        var json = $.parseJSON(msg[key]);
+                        $("#" + key + "-type").val(json.type);
+                        if (json.type != 0) {
+                            $("#" + key + "-date1").hide();
+                            $("#" + key + "-date1").attr("disabled", true)
+                            $("#" + key + "-date2 input").attr("disabled", false)
+                            $("#" + key + "-date2 input").val(json.date);
+                            $("#" + key + "-date2").show();
+                        } else {
+                            $("#" + key + "-date2").hide();
+                            $("#" + key + "-date2 input").attr("disabled", true)
+                            $("#" + key + "-date1").attr("disabled", false)
+                            $("#" + key + "-date1").val(json.date);
+                            $("#" + key + "-date1").show();
+                        }
+                        $("#" + key + "-time").val(json.time);
+                    }
+                    $("#activityForm #" + key).val(msg[key]);
+                }
+                $(".itemName").val(name+"_"+activityId);
+                $(".itemName").trigger("chosen:updated");
+                $("#opacityDiv").show();
+                $("#activityEditDiv").show();
+            } else {
+                alert("{$Think.lang.tip_get_shelf_activity_conf_failed}");
+            }
+        },
+        error:function () {
+            alert("Server error!");
+        }
+    })
+}
+function delGoodsRelation(relationId) {
+    if (confirm("{$Think.lang.tip_confirm_delete_shelf_activity_conf}")) {
+        $.ajax({
+            url:"?s=/Home/ActivityRelation/delRelation",
+            data:{relationId:relationId},
+            success:function (msg) {
+                if (msg == 1) {
+                    $("#relation_" + relationId).remove();
+                    alert("{$Think.lang.tip_delete_shelf_activity_conf_success}");
+                } else {
+                    alert("{$Think.lang.tip_delete_shelf_activity_conf_failed}");
+                }
+            },
+            error:function () {
+                alert("Server error!");
+            }
+        })
+    }
+}
+$(function () {
+    $(".addGoods").click(function () {
+        $("#opacityDiv").show();
+        $("#goodsEditDiv").show();
+        $("#saveGoods").show();
+        $("#updateGoods").hide();
+    });
+    $(".grey").click(function () {
+        $("#opacityDiv").hide();
+        $("#goodsEditDiv").hide();
+        $("#activityEditDiv").hide();
+        $("#activityTimeDiv").hide();
+    });
+    $("#saveGoods").click(function () {
+        $.ajax({
+            url:"?s=/Home/Goods/saveGoods",
+            data:$("#goodsForm").serializeArray(),
+            type:"POST",
+            success:function (msg) {
+                if (msg == 1) {
+                    alert("{$Think.lang.tip_add_shelf_success}");
+                    $(".content").load("?s=/Home/Goods/show")
+                } else {
+                    alert(msg);
+                }
+            },
+            error:function () {
+                alert("Server error");
+            }
+        })
+    });
+
+    $("#updateGoods").click(function () {
+        $.ajax({
+            url:"?s=/Home/Goods/updateGood",
+            data:$("#goodsForm").serialize(),
+            type:"POST",
+            success:function (msg) {
+                if (msg == 1) {
+                    alert("{$Think.lang.tip_edit_shelf_success}");
+                    $(".content").load("?s=/Home/Goods/show")
+                } else {
+                    alert("{$Think.lang.tip_edit_shelf_failed}");
+                }
+            },
+            error:function () {
+                alert("Server error!");
+            }
+        })
+    });
+    $("#saveGoodActivity").click(function () {
+        $.ajax({
+            url:"?s=/Home/ActivityRelation/saveActivity",
+            data:$("#activityForm").serialize(),
+            type:"POST",
+            success:function (msg) {
+                if (msg == 1) {
+                    alert("{$Think.lang.tip_add_shelf_activity_success}");
+                    zhankai($("#activityForm_id").val());
+                    $("#activityEditDiv").hide();
+                    $("#opacityDiv").hide();
+                    $("#activityForm")[0].reset();
+                    zhankai($("#activityForm_id").val());
+                } else {
+                    alert("{$Think.lang.tip_add_shelf_activity_failed_check}");
+                }
+            },
+            error:function () {
+                alert("Server error!");
+            }
+        })
+    });
+    $("#updateGoodActivity").click(function () {
+        $.ajax({
+            url:"?s=/Home/ActivityRelation/updateActivity",
+            data:$("#activityForm").serialize(),
+            type:"POST",
+            success:function (msg) {
+                if (msg == 1) {
+                    alert("{$Think.lang.tip_edit_shelf_activity_success}");
+                    zhankai($("#activityForm_id").val());
+                    $("#activityEditDiv").hide();
+                    $("#opacityDiv").hide();
+                    $("#activityForm")[0].reset();
+                    zhankai($("#activityForm_id").val());
+                } else {
+                    alert("{$Think.lang.tip_edit_shelf_activity_failed}");
+                }
+            },
+            error:function () {
+                alert("Server error!");
+            }
+        })
+
+    });
+})
+</script>
+

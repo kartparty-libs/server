@@ -1,0 +1,41 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_server_updata}</h1>
+</div>
+<div class="col-md-12">
+    <div class="col-md-12" style="margin-top: 1em;margin-bottom: 1em;">
+        <button class="btn btn-primary" id="refresh">
+            <i class="fa fa-refresh"></i> {$Think.lang.left_server_updata}</button>
+    </div>
+    <div class="col-lg-20 col-sm-20 col-xs-20 control-label"  style="padding: 1em;">
+            {$Think.lang.common_luaname}
+            <input name="versions" type="text" class="col-sm-8 col-xs-4" id="filename">
+     </div>
+    </div>
+</div>
+
+<script type="application/javascript">
+    $("#refresh").click(function () {
+        UpdataFile();
+    });
+    function UpdataFile() {
+        var sfilename = $("#filename").val();
+        if(sfilename.length <= 0 ){
+            alert('{$Think.lang.tip_manage_error}');
+            return
+        }
+        $.ajax({
+            url: "__MODULE__/Server/HotUpDataServer",
+            data: { filename: sfilename },
+            success: function (msg) {
+                if (msg["ret"] == 0) {
+                    alert(msg["serverid"] +'{$Think.lang.tip_manage_server_success}');
+                } else {
+                    alert('{$Think.lang.tip_manage_error}');
+                }
+            },
+            error: function (msg) {
+                alert('{$Think.lang.tip_manage_error}');
+            }
+        });
+    }
+</script>

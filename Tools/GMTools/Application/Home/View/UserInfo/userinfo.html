@@ -1,0 +1,79 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#addUser").click(function () {
+            loadUrl("__MODULE__/UserInfo/addUserPage");
+        });
+    });
+    function deleteUser(id) {
+        var status = confirm("{$Think.lang.tip_confirm_delete_user}");
+        if (!status) {
+            return false;
+        }
+        $.ajax({
+            url: "__MODULE__/UserInfo/deluser/id/" + id,
+            success: function (msg) {
+                var result = eval("(" + msg + ")");
+                if (result.status == 1) {
+                    alert('{$Think.lang.tip_delete_user_success}');
+                    location.reload();
+                } else {
+                    alert('{$Think.lang.tip_delete_user_failed}');
+                }
+            },
+            error: function () {
+                alert('{$Think.lang.tip_delete_user_error}');
+            }
+
+        });
+    }
+    function updateUser(id) {
+        loadUrl("__MODULE__/UserInfo/updateUserPage/id/" + id);
+    }
+</script>
+
+<div class="header">
+
+    <h1 class="page-title">{$Think.lang.left_user_info_manage}</h1>
+
+</div>
+<div>
+
+    <div class="btn-toolbar list-toolbar">
+        <button class="btn btn-primary" id="addUser"><i class="fa fa-plus"></i> {$Think.lang.user_add}</button>
+        <div class="btn-group">
+        </div>
+    </div>
+    <table class="table f">
+        <thead>
+        <tr>
+            <th>{$Think.lang.user_user_name}</th>
+            <th>{$Think.lang.user_is_admin}</th>
+            <th>{$Think.lang.player_create_time}</th>
+            <th style="width: 300px;">{$Think.lang.common_control}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <volist name="userInfo" id="user">
+            <input id="id" value="{$user.id}" type="hidden"/>
+            <tr>
+                <td>{$user.user_name}</td>
+                <td>
+                    <eq name="user.isadmin" value="0">
+                        {$Think.lang.common_no}
+                    </eq>
+                    <eq name="user.isadmin" value="1">
+                        {$Think.lang.common_yes}
+                    </eq>
+                </td>
+                <td>{$user.create_time}</td>
+                <td>
+                    <!--<input type="button" class="btn btn-default" value="修改" id="updateUser"
+                           onclick="updateUser({$user.id})"/>-->
+                    <input type="button" class="btn btn-danger" value="{$Think.lang.common_delete}" id="delUser"
+                           onclick="deleteUser({$user.id})"/>
+                </td>
+            </tr>
+        </volist>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,170 @@
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_send_server_mail}</h1>
+</div>
+<div class="col-sm-12 col-lg-8 col-xs-12">
+    <div class="row" style="padding: 1em;">
+        <label class="col-lg-2 col-sm-2 col-xs-2 control-label no-padding-left" for="title"> {$Think.lang.mail_title}: </label>
+
+        <div class="col-lg-4 col-sm-5 col-xs-8">
+            <input id="title" placeholder="{$Think.lang.mail_title}" class="col-sm-12" type="text" name="title">
+        </div>
+    </div>
+    <div class="row" style="padding: 1em;">
+        <label class="col-lg-2 col-sm-2 col-xs-2 control-label no-padding-left" for="content"> {$Think.lang.mail_content}: </label>
+
+        <div class="col-lg-4 col-sm-5 col-xs-8">
+        <textarea class="col-sm-12" style="resize: none;height: 5em;" class="form-control" id="content"
+                  placeholder="{$Think.lang.mail_content}"
+                  name="content"></textarea>
+        </div>
+    </div>
+
+    <div id="itemDiv" class="row">
+        <div class="col-lg-12 padding-bottom padding-top">
+            <div class="col-lg-3 center ">
+            <button class="btn btn-warning addItem"><i class="fa fa-plus"></i> {$Think.lang.mail_add_item_option}</button>
+            </div>
+            <div class="col-lg-9">
+            <span class="help-block red smaller-90">{$Think.lang.mail_tip}</span>
+            </div>
+        </div>
+        <div class="item_row" style="margin-top: 1em;">
+            <div class="col-lg-6 col-sm-4 col-xs-12">
+                <label class="col-lg-4 col-sm-6">{$Think.lang.mail_item_select}:</label>
+                <select class="chosen-select itemName col-lg-5" id="form-field-select-3" data-placeholder="Choose a Country..."
+                        style="display: none;" name="item">
+                    <option value="0">{$Think.lang.mail_item_select}</option>
+                    <volist name="items" id="item">
+                        <option value="{$item.itemid}">{$item.itemname}</option>
+                    </volist>
+                </select>
+            </div>
+            <div class="col-lg-6 col-sm-4 col-xs-12">
+                <label class="col-lg-4 col-sm-6">{$Think.lang.item_number}:</label>
+                <input class="number col-lg-3" placeholder="number" min="1" type="number" style="margin-bottom: 1em;">
+                <span class="glyphicon glyphicon-trash fa-lg red remove inline col-lg-3" style="">{$Think.lang.common_delete}</span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-sm-4 padding-top">
+            <div class="btn-toolbar list-toolbar">
+                <button class="btn btn-success" id="sendMail"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.mail_send}</button>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-4 padding-top">
+            <div class="btn-toolbar list-toolbar">
+                <button class="btn btn-success" id="sendAllMail"><span class="glyphicon glyphicon-ok"></span> {$Think.lang.mail_sendAll}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var divHtml = $(".item_row").html();;
+    initSelect();
+    function initSelect(){
+        $.each($(".itemName"),function(){
+            $(this).chosen({search_contains:true});
+        })
+    }
+    $("div").delegate(".remove","click",function () {
+        if ($(".remove").length != 1) {
+            $(this).parent().parent().remove();
+        } else {
+            alert("{$Think.lang.tip_item_retain}");
+            return false;
+        }
+    })
+    $(".addItem").click(function () {
+        if ($(".item_row .itemName").length >= 4) {
+            alert("{$Think.lang.tip_max_items}");
+        } else {
+            $("#itemDiv").append("<div class='item_row'>"+divHtml+"</div>");
+            initSelect()
+        }
+    });
+    $("#sendMail").click(function () {
+        var bool = true;
+        var item = "0";
+        var num = "0";
+
+        var roleId = $("#roleId").val();
+        var title = $("#title").val();
+        var content = $("#content").val();
+        bool = verifyParam(roleId,title,content);
+        if ($(".chosen-select").length > 1 || $(".number").eq(0).val() != "") {
+            $(".chosen-select").each(function (i) {
+                if ($(this).val() == "" || $(".number").eq(i).val() == "") {
+                    bool = false;
+                    alert("{$Think.lang.tip_input_num_error}");
+                    return bool;
+                } else {
+                    item += $(this).val() + ",";
+                    num += $(".number").eq(i).val() + ",";
+                }
+            })
+        }
+        if(bool){
+            if(confirm("{$Think.lang.tip_confirm_send_server_mail}")){
+                $.ajax({
+                    url: "__MODULE__/GmManage/sendMail/title/" + title + "/content/" + content + "/item/" + item + "/num/" + num,
+                    success: function (msg) {
+                        msg.ret == 0 ? alert("{$Think.lang.tip_send_server_mail_success}") : alert("{$Think.lang.tip_send_server_mail_failed}");
+                    },
+                    error: function () {
+                        alert('{$Think.lang.tip_send_server_mail_error}');
+                    }
+                });
+            }
+        }
+    })
+    $("#sendAllMail").click(function () {
+        var bool = true;
+        var item = "0";
+        var num = "0";
+
+        var roleId = $("#roleId").val();
+        var title = $("#title").val();
+        var content = $("#content").val();
+        bool = verifyParam(roleId,title,content);
+        if ($(".chosen-select").length > 1 || $(".number").eq(0).val() != "") {
+            $(".chosen-select").each(function (i) {
+                if ($(this).val() == "" || $(".number").eq(i).val() == "") {
+                    bool = false;
+                    alert("{$Think.lang.tip_input_num_error}");
+                    return bool;
+                } else {
+                    item += $(this).val() + ",";
+                    num += $(".number").eq(i).val() + ",";
+                }
+            })
+        }
+        if(bool){
+            if(confirm("{$Think.lang.tip_confirm_send_server_mail}")){
+                $.ajax({
+                    url: "__MODULE__/GmManage/sendAllMail/title/" + title + "/content/" + content + "/item/" + item + "/num/" + num,
+                    success: function (msg) {
+                        msg.ret == 0 ? alert("{$Think.lang.tip_send_server_mail_success}") : alert("{$Think.lang.tip_send_server_mail_failed}");
+                    },
+                    error: function () {
+                        alert('{$Think.lang.tip_send_server_mail_error}');
+                    }
+                });
+            }
+        }
+    })
+    function verifyParam(roleId, title, content) {
+         if (title == "") {
+            alert("{$Think.lang.tip_mail_title_error}")
+            return false;
+        } else if (content == "") {
+            alert("{$Think.lang.tip_mail_content_error}")
+            return false;
+        } else if (roleId == "") {
+            alert("{$Think.lang.tip_get_player}")
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>

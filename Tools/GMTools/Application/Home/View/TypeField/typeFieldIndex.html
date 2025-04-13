@@ -1,0 +1,237 @@
+<style type="text/css">
+    .editDiv{
+        width: 25%;
+        height: auto;
+        position: absolute;
+        left: 33%;
+        top:23%;
+        padding: 0px;
+        border: 0;
+        position: fixed;
+    }
+</style>
+
+<div class="header">
+    <h1 class="page-title">{$Think.lang.left_activity_field_conf}</h1>
+</div>
+
+<div class="col-md-12 ">
+    <div class="col-lg-3 col-sm-7 col-xs-6 padding-top">
+        <span class="col-lg-5 col-sm-4 text-center">{$Think.lang.field_activity_type}:</span>
+        <select id="activityType" class="select2-container col-lg-7 col-sm-8" name="activityType">
+            <option value="">&nbsp;</option>
+            <volist name="activityType" id="type">
+                <option value="{$type.activity_id}">
+                    {$type.activity_name}[#{$type.activity_id}]
+                </option>
+            </volist>
+        </select>
+    </div>
+    <div class="col-lg-2 col-sm-6 col-xs-6 padding-top">
+        <input class="btn btn-primary col-lg-6 col-sm-6" value="{$Think.lang.common_search}" id="search" type="button" onclick="search()">
+    </div>
+    <div class="padding-top" style="margin-top: 3.5em;">
+        <button class="btn btn-primary" style="margin-bottom: 1em;">
+            <sapn class="glyphicon glyphicon-plus small">&nbsp;{$Think.lang.field_add_activity_field}</sapn>
+        </button>
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>{$Think.lang.field_activity_type_id}</th>
+                <th>{$Think.lang.field_param_type}</th>
+                <th>{$Think.lang.field_param_name}</th>
+                <th>{$Think.lang.field_param_order}</th>
+                <th>{$Think.lang.field_field}</th>
+                <th>{$Think.lang.field_field_name}</th>
+                <th>{$Think.lang.field_field_enum}</th>
+                <th>{$Think.lang.common_control}</th>
+            </tr>
+            </thead>
+            <tbody class="tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="page-content" style="display: none;background: #000000;width: 100%;height: 100%;position: fixed;top: 0;left: 0;opacity: .3;" id="opacityDiv">
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="typeFieldDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.field_field_info}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row center">
+                    <form id="typeFieldForm">
+                        <input type="hidden" name="id" id="id">
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_activity_type}:</span>
+                            <select id="activity_type" class="select2-container col-lg-5 col-sm-8" name="activity_type">
+                                <option value="">&nbsp;</option>
+                                <volist name="activityType" id="type">
+                                    <option value="{$type.activity_id}">
+                                        {$type.activity_name}[#{$type.activity_id}]
+                                    </option>
+                                </volist>
+                            </select>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_param_type}:</span><input type="text" name="type_key" id="type_key" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_param_name}:</span><input type="text" name="key_name" id="key_name" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_param_order}:</span><input type="number" name="key_order" id="key_order" min="1" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_field}:</span><input type="text" name="type_field" id="type_field" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_field_name}:</span><input type="text" name="type_name" id="type_name" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">{$Think.lang.field_field_enum}:</span><input type="text" name="enum" id="enum" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveTypeField" value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateTypeField" value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;" value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function search(){
+        $.ajax({
+            url:"__MODULE__/TypeField/getFieldsByType",
+            data:{type:$("#activityType").val()},
+            type:"POST",
+            success:function(msg){
+                $(".tbody").html("");
+                for(i = 0;i<msg.length;i++){
+                    var html = "<tr id='"+msg[i].id+"'>";
+                    html+="<td>"+msg[i].activity_type+"</td>";
+                    html+="<td>"+msg[i].type_key+"</td>";
+                    html+="<td>"+msg[i].key_name+"</td>";
+                    html+="<td>"+msg[i].key_order+"</td>";
+                    html+="<td>"+msg[i].type_field+"</td>";
+                    html+="<td>"+msg[i].type_name+"</td>";
+                    var fieldEnum = msg[i].enum == null ? "":msg[i].enum;
+                    html+="<td>"+ fieldEnum +"</td>";
+                    html += "<td><sapn class='glyphicon glyphicon-edit small blue' onclick=editType('"+msg[i].id+"')>{$Think.lang.common_edit}</sapn>&nbsp;";
+                    html += "<sapn class='glyphicon glyphicon-trash small red' onclick=delType('"+msg[i].id+"')>{$Think.lang.common_delete}</sapn></td>";
+                    html+="</tr>";
+                    $(".tbody").append(html);
+                }
+            },
+            error:function(){
+                alert("Server error!");
+            }
+        });
+    }
+    $(".glyphicon-plus").click(function(){
+        $("#typeFieldForm")[0].reset();
+        $("#updateTypeField").hide();
+        $("#saveTypeField").show();
+        $("#opacityDiv").show();
+        $("#typeFieldDiv").show();
+    })
+    $(".grey").click(function(){
+        $("#opacityDiv").hide();
+        $("#typeFieldDiv").hide();
+    });
+    $("#saveTypeField").click(function(){
+        var type = $("#activity_type").val();
+        if(type==""){
+            alert("{$Think.lang.tip_field_select_activity_type}");
+        }else{
+            $.ajax({
+                url:"__MODULE__/TypeField/saveTypeField",
+                data:$("#typeFieldForm").serialize(),
+                type:"POST",
+                success:function(msg){
+                    if(msg==1){
+                        alert("{$Think.lang.tip_add_activity_field_success}");
+                        $("#opacityDiv").hide();
+                        $("#typeFieldDiv").hide();
+                        search();
+                    }else{
+                        alert("{$Think.lang.tip_add_activity_field_failed}");
+                    }
+                },
+                error:function(){
+                    alert("Server error!");
+                }
+            });
+        }
+    })
+    $("#updateTypeField").click(function(){
+        $.ajax({
+            url:"__MODULE__/TypeField/updateTypeField",
+            data:$("#typeFieldForm").serialize(),
+            type:"POST",
+            success:function(msg){
+                if(msg==1){
+                    alert("{$Think.lang.tip_update_activity_field_success}");
+                    $("#opacityDiv").hide();
+                    $("#typeFieldDiv").hide();
+                    search();
+                }else{
+                    alert("{$Think.lang.tip_update_activity_field_failed}");
+                }
+            },
+            error:function(){
+                alert("Server error!");
+            }
+        });
+    });
+    function delType(id){
+        if(confirm("{$Think.lang.tip_confirm_delete_activity_field}")){
+            $.ajax({
+                url:"__MODULE__/TypeField/delTypeField",
+                data:{id:id},
+                type:"POST",
+                success:function(msg){
+                    if(msg==1){
+                        alert("{$Think.lang.tip_delete_activity_field_success}");
+                        $("#"+id).remove();
+                    }else{
+                        alert("{$Think.lang.tip_delete_activity_field_failed}");
+                    }
+                },
+                error:function(){
+                    alert("Server error!");
+                }
+            });
+        }
+    }
+    function editType(id){
+        $.ajax({
+            url:"__MODULE__/TypeField/getTypeField",
+            data:{id:id},
+            type:"POST",
+            success:function(msg){
+                if(msg.ret==1){
+                    var result = msg.result;
+                    $("#updateTypeField").show();
+                    $("#saveTypeField").hide();
+                    for(key in result){
+                        $("#"+key).val(result[key]);
+                    }
+                    $("#opacityDiv").show();
+                    $("#typeFieldDiv").show();
+                }else{
+                    alert("{$Think.lang.tip_get_activity_field_failed}");
+                }
+            },
+            error:function(){
+                alert("Server error!");
+            }
+        });
+    }
+
+</script>

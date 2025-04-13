@@ -1,0 +1,165 @@
+<style type="text/css">
+    .editDiv{
+        width: 25%;
+        height: auto;
+        position: absolute;
+        left: 33%;
+        top:23%;
+        padding: 0px;
+        border: 0;
+        position: fixed;
+    }
+</style>
+
+<div class="header">
+    <h1 class="page-title">平台地址配置</h1>
+</div>
+
+<div class="col-md-12 ">
+    <div class="padding-top" style="margin-top: 1em;">
+        <button class="btn btn-primary" style="margin-bottom: 1em;">
+            <sapn class="glyphicon glyphicon-plus small">&nbsp;添加平台地址</sapn>
+        </button>
+        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>平台名</th>
+                <th>gm地址</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="tbody">
+            <volist name="channel" id="channel">
+                <tr>
+                    <td>{$channel.id}</td>
+                    <td>{$channel.name}</td>
+                    <td>{$channel.gm_url}</td>
+                    <td>
+                        <input type="button" class="btn btn-default" value="修改" onclick="updateChannel({$channel.id})"/>
+                        <input type="button" class="btn btn-danger" value="{$Think.lang.common_delete}" id="delUser"
+                               onclick="delChanel({$channel.id})"/>
+                    </td>
+                </tr>
+            </volist>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="page-content" style="display: none;background: #000000;width: 100%;height: 100%;position: fixed;top: 0;left: 0;opacity: .3;" id="opacityDiv">
+</div>
+<div class="col-sm-12 col-xs-12 editDiv" id="typeFieldDiv" style="display: none;">
+    <div class="widget-box">
+        <div class="widget-header widget-header-flat">
+            <h4>{$Think.lang.field_field_info}</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <div class="row center">
+                    <form id="channelForm">
+                        <input type="hidden" id="id" name="id">
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">平台名:</span>
+                            <input type="text" name="name" id="name" class="col-lg-5">
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top">
+                            <span class="col-lg-3 align-right">平台地址:</span>
+                            <textarea name="gm_url" id="gm_url" class="col-lg-5" rows="5" cols="10"></textarea>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-xs-12 padding-top align-center">
+                            <input type="button" class="btn btn-success blue" id="saveChannel" value="{$Think.lang.common_add}">
+                            <input type="button" class="btn btn-success blue" id="updateChannel" value="{$Think.lang.common_save}">
+                            <input type="button" class="btn grey" style="margin: 1em;" value="{$Think.lang.common_cancel}">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(".glyphicon-plus").click(function(){
+        $("#channelForm")[0].reset();
+        $("#updateChannel").hide();
+        $("#opacityDiv").show();
+        $("#typeFieldDiv").show();
+    })
+    $(".grey").click(function(){
+        $("#opacityDiv").hide();
+        $("#typeFieldDiv").hide();
+    });
+    $("#saveChannel").click(function(){
+            $.ajax({
+                url:"__MODULE__/TypeField/saveChannel",
+                data:$("#channelForm").serialize(),
+                type:"POST",
+                success:function(msg){
+                    if(msg==1){
+                        alert("添加平台地址成功!");
+                        $(".content").load("__MODULE__/TypeField/channelUrlPage");
+                    }else{
+                        alert("添加平台地址失败");
+                    }
+                },
+                error:function(){
+                    alert("Server error!");
+                }
+            });
+    })
+    $("#updateChannel").click(function(){
+        $.ajax({
+            url:"__MODULE__/TypeField/updateChannel",
+            data:$("#channelForm").serialize(),
+            type:"POST",
+            success:function(msg){
+                if(msg==1){
+                    alert("修改平台地址成功!");
+                    $(".content").load("__MODULE__/TypeField/channelUrlPage");
+                }else{
+                    alert("修改平台地址失败!");
+                }
+            },
+            error:function(){
+                alert("Server error!");
+            }
+        });
+    });
+    function updateChannel(id){
+            $.ajax({
+                url:"__MODULE__/TypeField/getChannelById",
+                data:{id:id},
+                type:"POST",
+                success:function(msg){
+                    $("#opacityDiv").show();
+                    $("#typeFieldDiv").show();
+                    $("#id").val(msg.id);
+                    $("#name").val(msg.name);
+                    $("#gm_url").val(msg.gm_url);
+                    $("#saveChannel").hide();
+                },
+                error:function(){
+                    alert("Server error!");
+                }
+            });
+        }
+    function delChanel(id){
+        if(confirm("确定要删除该渠道吗?")){
+            $.ajax({
+                url:"__MODULE__/TypeField/delChannel",
+                data:{id:id},
+                type:"POST",
+                success:function(msg){
+                    if(msg == 1){
+                        alert("删除渠道成功!");
+                        $(".content").load("__MODULE__/TypeField/channelUrlPage");
+                    }else{
+                        alert("删除渠道失败!");
+                    }
+                },
+                error:function(){
+                    alert("Server error!");
+                }
+            });
+        }
+    }
+</script>
