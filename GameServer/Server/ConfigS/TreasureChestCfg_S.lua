@@ -1,7 +1,0 @@
-return
-{
-[1]={Id=1,Type=0,RandomScore={1,5},FusionParam={2,3}},
-[2]={Id=2,Type=1,RandomScore={20,50},FusionParam={3,3}},
-[3]={Id=3,Type=2,RandomScore={100,200},FusionParam={4,3}},
-[4]={Id=4,Type=3,RandomScore={500,1000},FusionParam={5,3}},
-[5]={Id=5,Type=4,RandomScore={1500,3000},FusionParam={}}}
