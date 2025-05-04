@@ -1,0 +1,9 @@
+return
+{
+[1]={Id=1,LineMaxPlayerNum=999999,SceneType=1,Time=0,EndTime=0,IsRobot=0,CarLevelLimit=0,GiftId=0},
+[2]={Id=2,LineMaxPlayerNum=8,SceneType=1,Time=0,EndTime=1000,IsRobot=0,CarLevelLimit=0,GiftId=0},
+[3]={Id=3,LineMaxPlayerNum=8,SceneType=2,Time=300000,EndTime=30000,IsRobot=1,CarLevelLimit=0,GiftId=0},
+[4]={Id=4,LineMaxPlayerNum=8,SceneType=2,Time=300000,EndTime=30000,IsRobot=1,CarLevelLimit=0,GiftId=0},
+[5]={Id=5,LineMaxPlayerNum=8,SceneType=2,Time=300000,EndTime=30000,IsRobot=1,CarLevelLimit=0,GiftId=0},
+[6]={Id=6,LineMaxPlayerNum=8,SceneType=2,Time=300000,EndTime=30000,IsRobot=1,CarLevelLimit=0,GiftId=0},
+[7]={Id=7,LineMaxPlayerNum=8,SceneType=2,Time=300000,EndTime=30000,IsRobot=1,CarLevelLimit=0,GiftId=0}}
