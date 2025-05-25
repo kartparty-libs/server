@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+public partial class $Name_Data
+{
+$Fields
+}
+public partial class $Name_Table : BaseTable
+{
+    public override string GetTableName() { return "$Name"; }
+    private List<$Name_Data> DataList;
+    public int Count {  get { return DataList.Count; } }
+    public $Name_Data GetItem(int index)
+    {
+        if (index >= DataList.Count || index < 0) return null;
+        return DataList[index];
+    }
+    public override void LoadJson(string json)
+    {
+        DataList = new List<$Name_Data>();
+        var list = Newtonsoft.Json.JsonConvert.DeserializeObject<$Name_Data[]>(json);
+        var len = list.Length;
+        for (int i = 0; i < len; i++)
+        {
+            DataList.Add(list[i]);
+        }
+#if $HasIndex
+            PostLoadJson();
+#endif
+    }
+    
+#if $HasIndex
+
+    private Dictionary<$IndexType, int> _keyToIndex;
+    private void PostLoadJson()
+    {
+        int len = DataList.Count;
+		_keyToIndex = new Dictionary<$IndexType, int>(len);
+		for (int i = 0;i < len; i++)
+		{
+			var item = DataList[i];
+			var k = item.$IndexName;
+			if (!_keyToIndex.ContainsKey(k))
+			{
+				_keyToIndex.Add(k, i);
+			}
+			else
+			{
+
+			}
+		}
+    }
+    public $Name_Data Get($IndexType key)
+    {
+        if (_keyToIndex != null && _keyToIndex.TryGetValue(key, out int index))
+        {
+            return GetItem(index);
+        }
+        return null;
+    }
+#endif
+
+}
