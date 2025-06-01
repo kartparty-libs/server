@@ -1,0 +1,32 @@
+{
+  "serverid": 1,
+  "open_server_time": "",
+  "close_server_time": "",
+
+  "isdebug": false,
+
+  "des_server_open1": "server_open配置key注释: 0:登录服 1:游戏服 2:挖矿服 3:排行服",
+  "des_server_open2": "server_open配置value数组注释: [1:对应服务器json配置,2:服务器向服务器请求的链接,2:客户端向服务器请求的链接,3:服务器是否开启]",
+  "server_open": {
+    "0": [ "LoginServer.json", "http://127.0.0.1:9885/kp_game/tg_loginserver/proto", "https://www.kartparty.net/kp_game/tg_loginserver/proto", "0" ],
+    "1": [ "GameServer.json", "http://127.0.0.1:9888/kp_game/tg_gs{0}/proto", "https://www.kartparty.net/kp_game/tg_gs{0}/proto", "1" ],
+    "2": [ "MainingServer.json", "http://127.0.0.1:9887/kp_game/tg_zyserver/proto", "https://www.kartparty.net/kp_game/tg_zyserver/proto", "0" ],
+    "3": [ "RankServer.json", "http://127.0.0.1:9886/kp_game/tg_paihangserver/proto", "https://www.kartparty.net/kp_game/tg_paihangserver/proto", "0" ]
+  },
+
+  "order_url": "https://sepolia.infura.io/v3/b51ef408e5c84966bf1ce61b6d7d8d12",
+  "order_content_jsonrpc": "2.0",
+  "order_content_method_getTransactionReceipt": "eth_getTransactionReceipt",
+  "order_content_method_getTransactionByHash": "eth_getTransactionByHash",
+  "order_hash": "0xb36a984bed82b4e30b35760a118329199e634570",
+
+  "telegram_bottoken": "7080066032:AAGCPxYlAXJKGvw8-dUV8aHL_hRN1X0Exmc",
+
+  "telegram_wallet_url": "https://tonapi.io/v2/blockchain/accounts/{0}/transactions?after_lt={1}&before_lt={2}&limit={3}&sort_order=desc",
+  "telegram_wallet_hash": "UQBl33kVuLw0rJDeyEPGdEXkPOZBY7K37b9H4qv5qEncIaMp",
+  "telegram_wallet_after_lt": 0,
+  "telegram_wallet_limit": 100,
+
+  "twitter_kp_redirect_uri": "https://b585-114-249-232-227.ngrok-free.app/kp_game/tg_loginserver/callback",
+  "twitter_kp_oauth2_uri": "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=MGZRak9Hekp2R08xcEYwNEFjeWE6MTpjaQ&redirect_uri={0}&scope=tweet.read%20offline.access%20tweet.write%20users.read%20follows.read%20follows.write&state=1/{1}&code_challenge=Kart_c93y8Ybx7cMzyAbG7M1a994EDDAc19Na&code_challenge_method=plain"
+}
