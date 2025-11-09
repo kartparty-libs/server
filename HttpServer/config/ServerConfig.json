@@ -1,0 +1,37 @@
+{
+  "version": 9,
+
+  "season_id": 4,
+
+  "environment": 1,
+  "des_environment": "环境类型: 0:开发环境 1:测试环境 2:生产环境 （500 501 502 tg3测服）（301 302 303 战斗服）（100 101 102 tg2测服）（200 201 202 新tg2测服）（400 测试服）",
+  "isdebug": true,
+
+  "tg_verify": true,
+
+  "crypto_cny_default": {
+    "0": [ "USDT", "1" ],
+    "1": [ "TON", "6.2" ]
+  },
+  "crtpto_cny_url": "https://min-api.cryptocompare.com/data/pricemulti?fsyms={0}&tsyms=USD&api_key=846cfaef85b5274bef11b4c1ddf5dad946301f61a77988cd0715ee5c9f501ac4",
+
+  "twitter_user_followings_ids_url": "https://twitter-aio.p.rapidapi.com/user/{0}/followings/ids?count=100",
+  "twitter_ceo_id": "1655808944068247557",
+  "twitter_kp_id": "1556555579618836480",
+  "twitter_kp_api_key": "hfGsaNLIwKgpn9WCpmVJXDQ3d",
+  "twitter_kp_api_secret": "9HRAMG7YadwYUdHXH0XmWmQFqp0up1PRmEHlmhDpWIiNeIJTBE",
+  "twitter_kp_bearer_token": "AAAAAAAAAAAAAAAAAAAAAPSAvgEAAAAAHRsNOgzLki0GQWhq3DAN0t0DJM0%3DiOqF1gib8C2cL8sPn7vHXohdfprhOAS9qKMeLL4kqNF7wXBJNp",
+  "twitter_kp_access_token": "1556555579618836480-93PuJgwpCv0pavYNHzBQVNnxMc0APM",
+  "twitter_kp_access_secret": "bRkzDhqHsWEWtbb0IsYZkygTkXNEEzPPP2x0HdpdP4HMu",
+  "twitter_kp_client_id": "MGZRak9Hekp2R08xcEYwNEFjeWE6MTpjaQ",
+  "twitter_kp_client_secret": "kRXp9DGYDdW28yUiz7WwnR8zo7JO9RUs3zZJ_8VjOMi5m2nx2u",
+  "twitter_kp_code_challenge": "Kart_c93y8Ybx7cMzyAbG7M1a994EDDAc19Na",
+  "twitter_kp_redirect_uri": "https://www.kartparty.net/kp_game/tg_loginserver/callback",
+  "twitter_kp_oauth2_uri": "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=MGZRak9Hekp2R08xcEYwNEFjeWE6MTpjaQ&redirect_uri={0}&scope=tweet.read+offline.access+tweet.write+users.read+follows.read+follows.write&state=100/{1}&code_challenge=Kart_c93y8Ybx7cMzyAbG7M1a994EDDAc19Na&code_challenge_method=plain",
+
+  "aeon_appid": "ZBmxk9EeCy9C521fCt0Ja2Lx",
+  "aeon_secretkey": "CMzYKNIHuUjoSPK0ptpG6Mh9BHt0Rz",
+  "aeon_url": "https://crypto-payment-api.aeon.xyz/open/api/payment/V2",
+  "aeon_callback_url": "https://72c5-114-249-224-149.ngrok-free.app/v1/aeoncallbackurl",
+  "aeon_redirect_url": "https://t.me/KartPartybot/KartParty"
+}

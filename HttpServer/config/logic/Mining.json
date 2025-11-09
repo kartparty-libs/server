@@ -1,0 +1,4 @@
+[
+{"Id":1,"Condition":100,"Cooldown":0,"ScoreCoefficient":34000,"ScorePool":-1,"PreSettlementTime":60},
+{"Id":2,"Condition":1000,"Cooldown":0,"ScoreCoefficient":43,"ScorePool":-1,"PreSettlementTime":60}
+]
